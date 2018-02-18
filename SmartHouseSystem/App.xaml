@@ -1,8 +1,9 @@
-﻿<Application
+﻿<prismUnity:PrismUnityApplication
+    xmlns:prismUnity="using:Prism.Unity.Windows"
     x:Class="SmartHouseSystem.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SmartHouseSystem"
     RequestedTheme="Light">
 
-</Application>
+</prismUnity:PrismUnityApplication>

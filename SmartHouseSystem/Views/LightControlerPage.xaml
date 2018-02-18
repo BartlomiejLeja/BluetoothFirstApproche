@@ -1,0 +1,34 @@
+﻿<prism:SessionStateAwarePage
+    xmlns:prism="using:Prism.Windows.Mvvm"
+    x:Class="SmartHouseSystem.Views.LightControlerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    prism:ViewModelLocator.AutoWireViewModel="True" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  />
+            <ColumnDefinition  />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition  />
+            <RowDefinition  />
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name="LayoutRoot" Margin="10">
+            <Button x:Name="turnOnLight" Content="Click to turn on the light"
+            Margin="5" Width="470"
+             HorizontalAlignment="Left"
+            Foreground="Green"
+            Command="{Binding LightOnCommand }"/>
+            <Button x:Name="turnOffLight" Content="Click to turn of the light"
+             Margin="5" Width="470"
+             HorizontalAlignment="Left"
+             Foreground="Green"
+            Command="{Binding LightOfCommand }"/>
+        </StackPanel>
+    </Grid>
+</prism:SessionStateAwarePage>
