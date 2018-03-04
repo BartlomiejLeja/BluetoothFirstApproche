@@ -26,6 +26,7 @@ namespace SmartHouseSystem.Views
         public MainPage()
         {
             this.InitializeComponent();
+
         }
     }
 }

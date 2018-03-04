@@ -19,16 +19,26 @@
         </Grid.RowDefinitions>
 
         <StackPanel x:Name="LayoutRoot" Margin="10">
+            <!--<StackPanel.Background>
+                <ImageBrush ImageSource="ms-appx:///Images/room.bmp" />
+            </StackPanel.Background>-->
+            <Image Height="100" Source="{Binding UriSource}"/>
             <Button x:Name="turnOnLight" Content="Click to turn on the light"
             Margin="5" Width="470"
              HorizontalAlignment="Left"
             Foreground="Green"
-            Command="{Binding LightOnCommand }"/>
+            Command="{Binding LightOnCommand }" />
+            <Button x:Name="LightSwitch"  Margin="5" Width="120" Height="100" Command="{Binding LightOnCommand }"  HorizontalAlignment="Center" >
+                <StackPanel>
+                    <Image Source="{Binding UriSource}"/>
+                </StackPanel>
+            </Button>
             <Button x:Name="turnOffLight" Content="Click to turn of the light"
              Margin="5" Width="470"
              HorizontalAlignment="Left"
              Foreground="Green"
             Command="{Binding LightOfCommand }"/>
+            <TextBlock  Text="{Binding UriSource}"/>
         </StackPanel>
     </Grid>
 </prism:SessionStateAwarePage>
