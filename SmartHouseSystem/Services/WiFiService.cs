@@ -20,13 +20,15 @@ namespace SmartHouseSystem.Services
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        public async Task SendHttpRequestAsync(int state)
+        public async Task SendHttpRequestAsync(bool state)
         {
             HttpClient httpClient = new HttpClient();
             var headers = httpClient.DefaultRequestHeaders;
             var httpResponseBody = String.Empty;
-
-            Uri requestUri = new Uri($"http://192.168.1.128/control?cmd=GPIO,13,{state.ToString()}");
+            Uri requestUri;
+        
+            if(state) requestUri = new Uri($"http://192.168.1.128/control?cmd=GPIO,14,0");
+            else requestUri = new Uri($"http://192.168.1.128/control?cmd=GPIO,14,1");
 
             var httpResponse = new HttpResponseMessage();
             Debug.WriteLine("TestService");

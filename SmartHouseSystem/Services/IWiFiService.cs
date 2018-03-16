@@ -5,7 +5,7 @@ namespace SmartHouseSystem.Services
 {
     public interface IWiFiService
     {
-        Task SendHttpRequestAsync(int state);
+        Task SendHttpRequestAsync(bool state);
         Task ListenHttpRequestsAsync();
         string Cmd { get; set; }
         event PropertyChangedEventHandler PropertyChanged;

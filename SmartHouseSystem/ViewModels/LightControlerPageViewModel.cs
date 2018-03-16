@@ -1,12 +1,7 @@
 ﻿using Prism.Commands;
 using Prism.Windows.Mvvm;
 using SmartHouseSystem.Services;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SmartHouseSystem.ViewModels
@@ -15,13 +10,13 @@ namespace SmartHouseSystem.ViewModels
     {
         private IWiFiService _wiFiService;
       
-        private string lightOn = "ms-appx:///Images/lightTurnOn.png";
-        private string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
+        private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
+        private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
       
         public ICommand LightOnCommand { get; private set; }
         public DelegateCommand LightOfCommand { get; private set; }
-        private string _uriSource;
-        private bool lightState =false;
+        private string _uriSource= lightOff;
+        private bool lightState =true;
         public string UriSource
         {
             get { return _uriSource; }
@@ -33,8 +28,9 @@ namespace SmartHouseSystem.ViewModels
             Debug.WriteLine("TestViewModelInsideConstructor");
             _wiFiService = wiFiService;
       
-           LightOnCommand = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(1);});
-           LightOfCommand = new DelegateCommand(async () => {await _wiFiService.SendHttpRequestAsync(0);});
+           LightOnCommand = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
+               lightState = !lightState; if(lightState) UriSource = lightOn; else UriSource = lightOff; });
+       
             _wiFiService.ListenHttpRequestsAsync();
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
             
@@ -42,17 +38,14 @@ namespace SmartHouseSystem.ViewModels
 
         private void _wiFiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (_wiFiService.Cmd =="On")
-                {
-                UriSource = lightOn;
-                }
+            if (_wiFiService.Cmd =="On") UriSource = lightOn;   
             else UriSource = lightOff;
         }
 
         private void TurnOn()
         {
             Debug.WriteLine("TestViewModelInsideTurnOn");
-            _wiFiService.SendHttpRequestAsync(1);
+         //   _wiFiService.SendHttpRequestAsync(1);
         }
 
 
