@@ -46,6 +46,8 @@
                          DependentValuePath="Time"  
                          IsSelectionEnabled="True"/>
                      </Charting:Chart>
+                <Button  Width="50" Height="50" Command="{Binding  SignalRConnectionCommand}"/>
+                
             </Grid>
         </SplitView.Content>
     </SplitView>

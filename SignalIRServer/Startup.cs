@@ -43,7 +43,7 @@ namespace SignalIRServer
             app.UseCors("AllowAny");
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Broadcaster>("message");
+                routes.MapHub<Broadcaster>("/message");
             });
             app.UseMvc();
         }

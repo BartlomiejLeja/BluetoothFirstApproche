@@ -1,35 +1,42 @@
-﻿
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartHouseSystem.Services
 {
-   public class SignalRService : ISignalRService
+    public class SignalRService : ISignalRService
     {
-//        public async Task Connect()
-//        {
-//            var connection = new HubConnection("http://localhost:51691/message");
-            
-//            var hubProxy = connection.CreateHubProxy("UptimeHub");
-            
-//            hubProxy.On<string>("send", UpdateTime);
+        private HubConnection connection;
+        public async Task Connect(IWiFiService wiFiService)
+        {
+             connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:51691/message")
+                .WithConsoleLogger(LogLevel.Trace)
+                .Build();
 
-//            connection.Start();
-//            if (connection.State == ConnectionState.Connected)
-//            {
-//                Debug.WriteLine("It works");
-//            }
-//            else Debug.WriteLine("Tou are worst programer that I ever saw");
-//        }
-//        private void UpdateTime(string obj)
-//        {
-//            throw new NotImplementedException();
-//        }
-   }
+            connection.On<string>("Send", data =>
+            {
+                Debug.WriteLine($"Received: {data}");
+            });
+
+            connection.On<bool>("TurnOnLight", async data =>
+            {
+                Debug.WriteLine("You light up light");
+                await wiFiService.SendHttpRequestAsync(data);
+            }
+            );
+
+            await connection.StartAsync();           
+        }
+
+        public async Task InvokeSendMethod()
+        {
+            await connection.InvokeAsync("Send", "Test method from UWP client");
+        }
+      
+    }
 }
     
 

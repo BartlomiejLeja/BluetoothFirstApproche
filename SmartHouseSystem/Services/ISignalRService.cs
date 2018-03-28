@@ -8,6 +8,7 @@ namespace SmartHouseSystem.Services
 {
    public  interface ISignalRService
     {
-     //  Task Connect();
+      Task Connect(IWiFiService wiFiService);
+      Task InvokeSendMethod();
     }
 }

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 namespace IoTHomeAutomationWebApplication.Controllers
 {
@@ -13,6 +16,12 @@ namespace IoTHomeAutomationWebApplication.Controllers
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
+
+        private HubConnection connection
+        = new HubConnectionBuilder()
+                .WithUrl("http://localhost:51691/message")
+                .WithConsoleLogger(LogLevel.Trace)
+                .Build();
 
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts()
@@ -25,6 +34,46 @@ namespace IoTHomeAutomationWebApplication.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
         }
+
+        [HttpGet("[action]")]
+        public IActionResult ConnectToSignalR()
+        {
+            connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:51691/message")
+                .WithConsoleLogger()
+                .Build();
+
+            connection.On<string>("Send", data =>
+            {
+                Debug.WriteLine($"Received: {data}");
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Received: {data}");
+            });
+
+            connection.StartAsync();
+            
+
+         // await connection.InvokeAsync("Send", "TestTestTestKurwaMacTest");
+           return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> InvokeSendMethod()
+        {
+           await connection.StartAsync();
+            await connection.InvokeAsync("Send", "InvokeSendMethod from sp.net core client");
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> LightUp()
+        {
+            await connection.StartAsync();
+            await connection.InvokeAsync("ChangeLightState", true);
+            return Ok();
+        }
+
 
         public class WeatherForecast
         {
@@ -40,5 +89,6 @@ namespace IoTHomeAutomationWebApplication.Controllers
                 }
             }
         }
+
     }
 }

@@ -25,8 +25,14 @@ namespace SignalIRServer.Hubs
 
         public Task Send(string message)
         {
-            Console.WriteLine("Send Mmethod invoke");
-            return Clients.All.InvokeAsync("Send", message);
+            Console.WriteLine("TestTestTEstETSTETSTETST");
+            return Clients.All.SendAsync("Send", message);
+        }
+
+        public Task ChangeLightState(bool isLightOn)
+        {
+            Console.WriteLine("TrigerLightSevice");
+            return Clients.Others.SendAsync("TurnOnLight",isLightOn);
         }
     }
 

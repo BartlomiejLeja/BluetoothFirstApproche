@@ -29,7 +29,7 @@ namespace SmartHouseSystem.ViewModels
             _wiFiService = wiFiService;
       
            LightOnCommand = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
-               lightState = !lightState; if(lightState) UriSource = lightOn; else UriSource = lightOff; });
+           lightState = !lightState; if(lightState) UriSource = lightOn; else UriSource = lightOff; });
        
             _wiFiService.ListenHttpRequestsAsync();
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;

@@ -14,9 +14,12 @@ namespace SmartHouseSystem.ViewModels
     {
         private bool isPaneOpen =false;
         private readonly INavigationService navigationService;
+        private readonly IWiFiService wiFiService;
         public ICommand OpenHamburgerMenuCommand { get; private set; }
         public ICommand CameraViewerPageCommand { get; private set; }
         public ICommand ESPViewerPageCommand { get; private set; }
+
+        public ICommand SignalRConnectionCommand { get; private set; }
         Random rand = new Random();
         public List<StatusModel> statusList;
 
@@ -34,8 +37,7 @@ namespace SmartHouseSystem.ViewModels
             set { SetProperty(ref statusList, value); }
         }
 
-
-        public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService)
+        public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, IWiFiService wiFiService)
         {
             StatusList = new List<StatusModel>
             {
@@ -45,6 +47,7 @@ namespace SmartHouseSystem.ViewModels
             };
             Debug.WriteLine("TestMainViewModel");
             this.navigationService = navigationService;
+            this.wiFiService = wiFiService;
             //OpenHamburgerMenuCommand = new DelegateCommand(async () =>
             //{
             //    IsPaneOpen = !isPaneOpen;
@@ -52,7 +55,8 @@ namespace SmartHouseSystem.ViewModels
             OpenHamburgerMenuCommand = new DelegateCommand(HamburgerMenuButton);
             CameraViewerPageCommand = new DelegateCommand(CameraViewerPage);
             ESPViewerPageCommand = new DelegateCommand(LightControlerPage);
-        //    signalRService.Connect();
+            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
+            signalRService.Connect(wiFiService);
         }
 
         private void HamburgerMenuButton()
