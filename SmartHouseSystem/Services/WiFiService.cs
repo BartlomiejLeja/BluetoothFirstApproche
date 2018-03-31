@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using Prism.Windows.Mvvm;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using Windows.Web.Http;
+using System.Net.Http;
 
 
 namespace SmartHouseSystem.Services
@@ -14,12 +15,13 @@ namespace SmartHouseSystem.Services
     {
         private HttpListener listener;
         private string cmd;
+        private bool lightStatus;
         public string Cmd { get => cmd; set { cmd = value; NotifyPropertyChanged(nameof(cmd)); } }
-
+    
         public event PropertyChangedEventHandler PropertyChanged;
         internal void NotifyPropertyChanged(String propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));  
+        
         public async Task SendHttpRequestAsync(bool state)
         {
             HttpClient httpClient = new HttpClient();
@@ -27,8 +29,8 @@ namespace SmartHouseSystem.Services
             var httpResponseBody = String.Empty;
             Uri requestUri;
         
-            if(state) requestUri = new Uri($"http://192.168.1.102/control?cmd=GPIO,14,0");
-            else requestUri = new Uri($"http://192.168.1.102/control?cmd=GPIO,14,1");
+            if(state) requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,0");
+            else requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,1");
 
             var httpResponse = new HttpResponseMessage();
             Debug.WriteLine("TestService");
@@ -43,8 +45,26 @@ namespace SmartHouseSystem.Services
                 httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
             }
             Debug.WriteLine(httpResponseBody);
+            
         }
+       
+        public async Task <string> CheckStatusOfLight()
+        {
+            HttpClient httpClient = new HttpClient();
+            var headers = httpClient.DefaultRequestHeaders;
+            var httpResponseBody = String.Empty;
+            Uri requestUri = new Uri($"http://192.168.1.109/control?cmd=STATUS,GPIO,14");
 
+            var httpResponse = new HttpResponseMessage();
+            Debug.WriteLine("Check Status Test");
+            
+            using (httpResponse = await httpClient.GetAsync(requestUri).ConfigureAwait(false))
+            {
+               
+                return await httpResponse.Content.ReadAsStringAsync();
+            } 
+        }
+          
         public async Task ListenHttpRequestsAsync()
         {
             listener = new HttpListener();

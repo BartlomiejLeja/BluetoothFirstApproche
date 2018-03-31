@@ -3,51 +3,58 @@ using Prism.Windows.Mvvm;
 using SmartHouseSystem.Services;
 using System.Diagnostics;
 using System.Windows.Input;
+using System;
+using Newtonsoft.Json;
 
 namespace SmartHouseSystem.ViewModels
 {
-    public class LightControlerPageViewModel: ViewModelBase
+    public class LightControlerPageViewModel : ViewModelBase
     {
         private IWiFiService _wiFiService;
-      
+
         private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
         private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
-      
-        public ICommand LightOnCommand { get; private set; }
+
+        public ICommand ChangeLightState { get; private set; }
         public DelegateCommand LightOfCommand { get; private set; }
-        private string _uriSource= lightOff;
-        private bool lightState =true;
+        private string _uriSource;
+        private bool lightState;
+
         public string UriSource
         {
             get { return _uriSource; }
-            set => SetProperty(ref _uriSource, value); 
+            set => SetProperty(ref _uriSource, value);
         }
 
         public LightControlerPageViewModel(IWiFiService wiFiService)
         {
             Debug.WriteLine("TestViewModelInsideConstructor");
             _wiFiService = wiFiService;
-      
-           LightOnCommand = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
-           lightState = !lightState; if(lightState) UriSource = lightOn; else UriSource = lightOff; });
-       
+            var pinStatusJason = _wiFiService.CheckStatusOfLight().GetAwaiter().GetResult();
+         
+            lightState = Convert.ToBoolean(JsonConvert.DeserializeObject<LightModel>(pinStatusJason).state);
+          
+            uriSourceChanger(lightState);
+
+            ChangeLightState = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
+                lightState = !lightState;
+                uriSourceChanger(lightState);
+            });
+
             _wiFiService.ListenHttpRequestsAsync();
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
-            
         }
 
         private void _wiFiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (_wiFiService.Cmd =="On") UriSource = lightOn;   
+            if (_wiFiService.Cmd == "On") UriSource = lightOn;
             else UriSource = lightOff;
         }
 
-        private void TurnOn()
+        private void uriSourceChanger(bool lightState)
         {
-            Debug.WriteLine("TestViewModelInsideTurnOn");
-         //   _wiFiService.SendHttpRequestAsync(1);
+          if (lightState)  UriSource = lightOff;
+            else UriSource = lightOn;
         }
-
-
     }
 }

@@ -28,7 +28,7 @@
              HorizontalAlignment="Left"
             Foreground="Green"
             Command="{Binding LightOnCommand }" />-->
-            <Button x:Name="LightSwitch" Background="White"  Margin="5" Width="120" Height="110" Command="{Binding LightOnCommand }"  HorizontalAlignment="Center" >
+            <Button x:Name="LightSwitch" Background="White"  Margin="5" Width="120" Height="110" Command="{Binding ChangeLightState }"  HorizontalAlignment="Center" >
                 <StackPanel>
                     <Image Height="100" Source="{Binding UriSource}"/>
                 </StackPanel>
