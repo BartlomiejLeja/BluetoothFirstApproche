@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
-using Newtonsoft.Json;
-using Prism.Windows.Mvvm;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
-
 
 namespace SmartHouseSystem.Services
 {
@@ -15,7 +11,7 @@ namespace SmartHouseSystem.Services
     {
         private HttpListener listener;
         private string cmd;
-        private bool lightStatus;
+       
         public string Cmd { get => cmd; set { cmd = value; NotifyPropertyChanged(nameof(cmd)); } }
     
         public event PropertyChangedEventHandler PropertyChanged;
@@ -44,8 +40,7 @@ namespace SmartHouseSystem.Services
             {
                 httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
             }
-            Debug.WriteLine(httpResponseBody);
-            
+            Debug.WriteLine(httpResponseBody); 
         }
        
         public async Task <string> CheckStatusOfLight()
@@ -60,7 +55,6 @@ namespace SmartHouseSystem.Services
             
             using (httpResponse = await httpClient.GetAsync(requestUri).ConfigureAwait(false))
             {
-               
                 return await httpResponse.Content.ReadAsStringAsync();
             } 
         }

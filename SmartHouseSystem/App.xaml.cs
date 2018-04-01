@@ -51,8 +51,9 @@ namespace SmartHouseSystem
             System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>> OnInitializeAsync called.");
 
             // Register MvvmAppBase services with the container so that view models can take dependencies on them
-           _container.RegisterInstance<IWiFiService>(new WiFiService());
+            _container.RegisterInstance<IWiFiService>(new WiFiService());
             _container.RegisterInstance<ISignalRService>(new SignalRService());
+            _container.RegisterInstance<IGlobalDataStorageService>(new GlobalDataStorageService());
             _container.RegisterInstance<INavigationService>(NavigationService);
             // Register any app specific types with the container
 

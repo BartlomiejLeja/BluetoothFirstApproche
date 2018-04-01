@@ -109,6 +109,8 @@
     <Compile Include="Model\LightModel.cs" />
     <Compile Include="Model\StatusModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\GlobalDataStorageService.cs" />
+    <Compile Include="Services\IGlobalDataStorageService.cs" />
     <Compile Include="Services\ISignalRService.cs" />
     <Compile Include="Services\IWiFiService.cs" />
     <Compile Include="Services\SignalRService.cs" />

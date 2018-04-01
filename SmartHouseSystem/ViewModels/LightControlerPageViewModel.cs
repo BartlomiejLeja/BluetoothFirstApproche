@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using System;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace SmartHouseSystem.ViewModels
 {
@@ -45,7 +46,7 @@ namespace SmartHouseSystem.ViewModels
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
         }
 
-        private void _wiFiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (_wiFiService.Cmd == "On") UriSource = lightOn;
             else UriSource = lightOff;

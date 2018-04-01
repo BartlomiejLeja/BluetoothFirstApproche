@@ -4,9 +4,15 @@ using Prism.Windows.Navigation;
 using SmartHouseSystem.Model;
 using SmartHouseSystem.Services;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.System.Threading;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace SmartHouseSystem.ViewModels
 {
@@ -15,13 +21,16 @@ namespace SmartHouseSystem.ViewModels
         private bool isPaneOpen =false;
         private readonly INavigationService navigationService;
         private readonly IWiFiService wiFiService;
+        private readonly IGlobalDataStorageService globalDataStorageService;
         public ICommand OpenHamburgerMenuCommand { get; private set; }
         public ICommand CameraViewerPageCommand { get; private set; }
         public ICommand ESPViewerPageCommand { get; private set; }
-
+        private int bulbOnCounter=0;
+        private int bulbOffCounter =1440;
+        
         public ICommand SignalRConnectionCommand { get; private set; }
         Random rand = new Random();
-        public List<StatusModel> statusList;
+        public ObservableCollection<StatusModel> statusList;
 
         public bool IsPaneOpen
         {
@@ -30,24 +39,25 @@ namespace SmartHouseSystem.ViewModels
             set { SetProperty(ref isPaneOpen, value); }
         }
 
-        public List<StatusModel> StatusList
+        public ObservableCollection<StatusModel> StatusList
         {
             get { return statusList; }
 
             set { SetProperty(ref statusList, value); }
         }
 
-        public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, IWiFiService wiFiService)
+        public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, 
+            IWiFiService wiFiService, IGlobalDataStorageService globalDataStorageService)
         {
-            StatusList = new List<StatusModel>
+            StatusList = new ObservableCollection<StatusModel>
             {
-                  new StatusModel("bullb1",rand.Next(0, 200)),
-                  new StatusModel("bullb2",rand.Next(0, 200)),
-                  new StatusModel("bullb3",rand.Next(0, 200)),
+                  new StatusModel("On",bulbOnCounter),
+                  new StatusModel("Off",bulbOffCounter ),
             };
             Debug.WriteLine("TestMainViewModel");
             this.navigationService = navigationService;
             this.wiFiService = wiFiService;
+            this.globalDataStorageService = globalDataStorageService;
             //OpenHamburgerMenuCommand = new DelegateCommand(async () =>
             //{
             //    IsPaneOpen = !isPaneOpen;
@@ -55,10 +65,51 @@ namespace SmartHouseSystem.ViewModels
             OpenHamburgerMenuCommand = new DelegateCommand(HamburgerMenuButton);
             CameraViewerPageCommand = new DelegateCommand(CameraViewerPage);
             ESPViewerPageCommand = new DelegateCommand(LightControlerPage);
-            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
+            SignalRConnectionCommand = new DelegateCommand(() => counterMenager()/*signalRService.InvokeSendMethod()*/);
+            wiFiService.ListenHttpRequestsAsync();
+            wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
             signalRService.Connect(wiFiService);
         }
 
+        private async void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+                TimeSpan delay = TimeSpan.FromSeconds(15);
+
+                ThreadPoolTimer DelayTimer = ThreadPoolTimer.CreatePeriodicTimer(
+                    (source) =>
+                    {
+                        if (wiFiService.Cmd == "On")
+                        {
+                            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                      () =>
+                      {
+
+                          StatusList.Clear();
+                          bulbOffCounter--;
+                          bulbOnCounter++;
+                          globalDataStorageService.BulbOnTimeInMinutes = bulbOnCounter;
+                          StatusList.Add(new StatusModel("On", bulbOnCounter));
+                          StatusList.Add(new StatusModel("Of", bulbOffCounter));
+
+                      });
+                        }
+                    }, delay );
+              
+            if (wiFiService.Cmd == "Off") DelayTimer.Cancel();
+        }
+
+      
+        //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
+        private void counterMenager()
+        {
+            //statusList[1].Time--;
+            //statusList[0].Time++;
+            StatusList.Clear();
+            bulbOffCounter --;
+            bulbOnCounter++;
+            StatusList.Add(new StatusModel("On", bulbOnCounter));
+            StatusList.Add(new StatusModel("Of", bulbOffCounter ));
+        }
         private void HamburgerMenuButton()
         {
             IsPaneOpen = !isPaneOpen;

@@ -9,7 +9,6 @@ namespace SmartHouseSystem.Services
         Task ListenHttpRequestsAsync();
         Task<string> CheckStatusOfLight();
         string Cmd { get; set; }
-       
         event PropertyChangedEventHandler PropertyChanged;   
     }
 }
