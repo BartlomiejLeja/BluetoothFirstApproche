@@ -48,14 +48,12 @@ namespace SmartHouseSystem.ViewModels
 
         private void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (_wiFiService.Cmd == "On") UriSource = lightOn;
-            else UriSource = lightOff;
+            uriSourceChanger(_wiFiService.Cmd == "Off");
         }
 
         private void uriSourceChanger(bool lightState)
         {
-          if (lightState)  UriSource = lightOff;
-            else UriSource = lightOn;
+            UriSource= lightState ? lightOff : lightOn;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace SmartHouseSystem.ViewModels
             CameraViewerPageCommand = new DelegateCommand(CameraViewerPage);
             ESPViewerPageCommand = new DelegateCommand(LightControlerPage);
             SignalRConnectionCommand = new DelegateCommand(() => counterMenager()/*signalRService.InvokeSendMethod()*/);
-            wiFiService.ListenHttpRequestsAsync();
+         //   wiFiService.ListenHttpRequestsAsync();
             wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
             signalRService.Connect(wiFiService);
         }
@@ -97,8 +97,7 @@ namespace SmartHouseSystem.ViewModels
               
             if (wiFiService.Cmd == "Off") DelayTimer.Cancel();
         }
-
-      
+   
         //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
         private void counterMenager()
         {
