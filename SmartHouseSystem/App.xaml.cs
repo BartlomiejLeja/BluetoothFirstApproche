@@ -43,9 +43,7 @@ namespace SmartHouseSystem
 
             return Task.FromResult<object>(null);
         }
-
-
-
+        
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>> OnInitializeAsync called.");

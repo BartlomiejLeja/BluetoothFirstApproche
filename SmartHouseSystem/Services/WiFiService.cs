@@ -11,13 +11,29 @@ namespace SmartHouseSystem.Services
     {
         private HttpListener listener;
         private string cmd;
-       
-        public string Cmd { get => cmd; set { cmd = value; NotifyPropertyChanged(nameof(cmd)); } }
+      
+        private DateTime lightOnDataTime;
+        private DateTime lightOffDataTime;
+
+        public DateTime LightOnDataTime { get=> lightOnDataTime; set { lightOnDataTime = value; LightOnDataTimeNotifyPropertyChanged(nameof(lightOnDataTime)); } }
+
+        public DateTime LightOffDataTime { get => lightOffDataTime; set { lightOffDataTime = value; LightOffDataTimeNotifyPropertyChanged(nameof(lightOffDataTime)); } }
+
+        public string Cmd { get => cmd; set { cmd = value; CmdNotifyPropertyChanged(nameof(cmd)); } }
     
         public event PropertyChangedEventHandler PropertyChanged;
-        internal void NotifyPropertyChanged(String propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));  
+
+        public event PropertyChangedEventHandler PropertyChanged1;
         
+        internal void CmdNotifyPropertyChanged(String propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        internal void LightOnDataTimeNotifyPropertyChanged(String propertyName) =>
+        PropertyChanged1?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        internal void LightOffDataTimeNotifyPropertyChanged(String propertyName) =>
+        PropertyChanged1?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         public async Task SendHttpRequestAsync(bool state)
         {
             HttpClient httpClient = new HttpClient();
@@ -25,9 +41,17 @@ namespace SmartHouseSystem.Services
             var httpResponseBody = String.Empty;
             Uri requestUri;
         
-            if(state) requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,0");
-            else requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,1");
-
+            if(state)
+            {
+              requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,0");
+                Cmd = "On";
+              LightOnDataTime = DateTime.Now;
+            }
+            else { requestUri = new Uri($"http://192.168.1.109/control?cmd=GPIO,14,1");
+                Cmd = "Off";
+                LightOffDataTime = DateTime.Now;
+            }
+               
             var httpResponse = new HttpResponseMessage();
             Debug.WriteLine("TestService");
             try
@@ -82,8 +106,17 @@ namespace SmartHouseSystem.Services
 
                 string[] urlRequestTab = (context.Request.Url).ToString().Split("=");
                 Cmd = urlRequestTab[urlRequestTab.Length-1];
+               
+                if (Cmd == "On")
+                {
+                    LightOnDataTime = DateTime.Now;
+                }
+                if(Cmd =="Off")
+                {
+                    LightOffDataTime = DateTime.Now;
+                }
 
-                Debug.WriteLine(cmd);
+                Debug.WriteLine(Cmd);
             }
         }
     }

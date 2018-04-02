@@ -12,6 +12,7 @@ namespace SmartHouseSystem.ViewModels
     public class LightControlerPageViewModel : ViewModelBase
     {
         private IWiFiService _wiFiService;
+        private readonly IGlobalDataStorageService _globalDataStorageService;
 
         private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
         private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
@@ -27,14 +28,17 @@ namespace SmartHouseSystem.ViewModels
             set => SetProperty(ref _uriSource, value);
         }
 
-        public LightControlerPageViewModel(IWiFiService wiFiService)
+        public LightControlerPageViewModel(IWiFiService wiFiService, IGlobalDataStorageService globalDataStorageService)
         {
             Debug.WriteLine("TestViewModelInsideConstructor");
+         
             _wiFiService = wiFiService;
+            _globalDataStorageService = globalDataStorageService;
+
             var pinStatusJason = _wiFiService.CheckStatusOfLight().GetAwaiter().GetResult();
          
             lightState = Convert.ToBoolean(JsonConvert.DeserializeObject<LightModel>(pinStatusJason).state);
-          
+     
             uriSourceChanger(lightState);
 
             ChangeLightState = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
@@ -42,7 +46,7 @@ namespace SmartHouseSystem.ViewModels
                 uriSourceChanger(lightState);
             });
 
-            _wiFiService.ListenHttpRequestsAsync();
+           // _wiFiService.ListenHttpRequestsAsync();
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
         }
 
