@@ -26,8 +26,6 @@ namespace SmartHouseSystem.ViewModels
         public ICommand OpenHamburgerMenuCommand { get; private set; }
         public ICommand CameraViewerPageCommand { get; private set; }
         public ICommand ESPViewerPageCommand { get; private set; }
-        private int bulbOnCounter=0;
-        private int bulbOffCounter =1440;
         private DateTime OnLightTime;
         private DateTime OffLightTime;
         private bool endOfCounter= false;
@@ -80,23 +78,15 @@ namespace SmartHouseSystem.ViewModels
             //    IsPaneOpen = !isPaneOpen;
             //});
            
-           OpenHamburgerMenuCommand = new DelegateCommand(HamburgerMenuButton);
+            OpenHamburgerMenuCommand = new DelegateCommand(HamburgerMenuButton);
             CameraViewerPageCommand = new DelegateCommand(CameraViewerPage);
             ESPViewerPageCommand = new DelegateCommand(LightControlerPage);
-            SignalRConnectionCommand = new DelegateCommand(() => counterMenager()/*signalRService.InvokeSendMethod()*/);
+            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
             wiFiService.ListenHttpRequestsAsync();
             wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
-         //   wiFiService.PropertyChanged1 += WiFiService_PropertyChanged1;
             PropertyChanged += _wiFiService_PropertyChanged;
             TimerTriger = true;
             signalRService.Connect(wiFiService);
-        }
-
-        private void WiFiService_PropertyChanged1(object sender, PropertyChangedEventArgs e)
-        {
-            var tempOn = wiFiService.LightOnDataTime;
-            var tempOff =  wiFiService.LightOffDataTime;
-            globalDataStorageService.LightOnInMinutes(tempOn, tempOff);
         }
 
         private void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e) //odjałem async
@@ -113,6 +103,7 @@ namespace SmartHouseSystem.ViewModels
                                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                                     () =>
                                          {
+                                             //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
                                              StatusList.Clear();
 
                                              StatusList.Add(new StatusModel("On", globalDataStorageService.BulbOnTimeInMinutes));
@@ -124,19 +115,6 @@ namespace SmartHouseSystem.ViewModels
             { DelayTimer.Cancel(); };
         }
    
-        //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
-        private void counterMenager()
-        {
-            //statusList[1].Time--;
-            //statusList[0].Time++;
-            StatusList.Clear();
-            bulbOffCounter --;
-            bulbOnCounter++;
-            StatusList.Add(new StatusModel("On", bulbOnCounter));
-            StatusList.Add(new StatusModel("Of", bulbOffCounter ));
-        }
-
-     
         private void HamburgerMenuButton()
         {
             IsPaneOpen = !isPaneOpen;
