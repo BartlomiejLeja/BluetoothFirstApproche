@@ -52,8 +52,6 @@ namespace IoTHomeAutomationWebApplication.Controllers
             });
 
             connection.StartAsync();
-            
-
          // await connection.InvokeAsync("Send", "TestTestTestKurwaMacTest");
            return Ok();
         }
@@ -62,8 +60,8 @@ namespace IoTHomeAutomationWebApplication.Controllers
         public async Task<IActionResult> InvokeSendMethod()
         {
            await connection.StartAsync();
-            await connection.InvokeAsync("Send", "InvokeSendMethod from sp.net core client");
-            return Ok();
+           await connection.InvokeAsync("Send", "InvokeSendMethod from sp.net core client");
+           return Ok();
         }
 
         [HttpGet("[action]")]

@@ -23,9 +23,9 @@ namespace SmartHouseSystem.Services
             //if (oldOnDataTime == dateTimeOn && oldOffDataTime == dateTimeOff)
             //    return;
          
-           if (dateTimeOff.Year != nullDataTime.Year && dateTimeOn.Year != nullDataTime.Year)
+           if (dateTimeOff.Year != nullDataTime.Year && dateTimeOn.Year != nullDataTime.Year && dateTimeOff.Minute != oldOffDataTime.Minute&& dateTimeOff.Second != oldOffDataTime.Second)
             {
-             BulbOffTimeInMinutes = (dateTimeOff - dateTimeOn).Minutes;
+             BulbOffTimeInMinutes =1440- (dateTimeOff - dateTimeOn).Minutes;
              BulbOnTimeInMinutes = (dateTimeOff - dateTimeOn).Minutes;
             }
 

@@ -95,6 +95,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppShell.xaml.cs">
+      <DependentUpon>AppShell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CameraViewHandler.cs" />
     <Compile Include="Camera\CameraPreviewManager.cs" />
     <Compile Include="Camera\FaceDetectionFrameProcessor.cs" />
@@ -108,6 +111,7 @@
     </Compile>
     <Compile Include="Model\LightModel.cs" />
     <Compile Include="Model\StatusModel.cs" />
+    <Compile Include="PageTokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\GlobalDataStorageService.cs" />
     <Compile Include="Services\IGlobalDataStorageService.cs" />
@@ -119,6 +123,8 @@
     <Compile Include="ViewModels\CameraViewerPageViewModel.cs.cs" />
     <Compile Include="ViewModels\LightControlerPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\MenuItemViewModel.cs" />
+    <Compile Include="ViewModels\SplitViewMenuPageViewModel.cs" />
     <Compile Include="ViewModels\StatusPageViewModel.cs" />
     <Compile Include="Views\CameraViewerPage.xaml.cs">
       <DependentUpon>CameraViewerPage.xaml</DependentUpon>
@@ -128,6 +134,9 @@
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SplitViewMenuPage.xaml.cs">
+      <DependentUpon>SplitViewMenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StatusPage.xaml.cs">
       <DependentUpon>StatusPage.xaml</DependentUpon>
@@ -157,7 +166,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AppShell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\SplitViewSampleStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -170,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SplitViewMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

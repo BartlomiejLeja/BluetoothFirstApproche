@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.Unity;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Unity.Windows;
+using Prism.Windows.AppModel;
 using Prism.Windows.Navigation;
 using SmartHouseSystem.Services;
 using System;
@@ -29,12 +31,12 @@ namespace SmartHouseSystem
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
-        //protected override UIElement CreateShell(Frame rootFrame)
-        //{
-        //    var shell = Container.Resolve<Shell>();
-        //    shell.SetContentFrame(rootFrame);
-        //    return shell;
-        //}
+        protected override UIElement CreateShell(Frame rootFrame)
+        {
+            var shell = Container.Resolve<AppShell>();
+            shell.SetContentFrame(rootFrame);
+            return shell;
+        }
         protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
         {
             NavigationService.Navigate("Main", null);
@@ -53,6 +55,8 @@ namespace SmartHouseSystem
             _container.RegisterInstance<ISignalRService>(new SignalRService());
             _container.RegisterInstance<IGlobalDataStorageService>(new GlobalDataStorageService());
             _container.RegisterInstance<INavigationService>(NavigationService);
+            _container.RegisterInstance<ISessionStateService>(SessionStateService);
+            _container.RegisterInstance<IEventAggregator>(EventAggregator);
             // Register any app specific types with the container
 
             // Set a factory for the ViewModelLocator to use the container to construct view models so their 

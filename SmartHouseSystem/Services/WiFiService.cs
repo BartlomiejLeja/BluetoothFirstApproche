@@ -43,11 +43,11 @@ namespace SmartHouseSystem.Services
         
             if(state)
             {
-              requestUri = new Uri($"http://192.168.1.119/control?cmd=GPIO,14,0");
+              requestUri = new Uri($"http://192.168.1.114/control?cmd=GPIO,14,0");
                 Cmd = "On";
               LightOnDataTime = DateTime.Now;
             }
-            else { requestUri = new Uri($"http://192.168.1.119/control?cmd=GPIO,14,1");
+            else { requestUri = new Uri($"http://192.168.1.114/control?cmd=GPIO,14,1");
                 Cmd = "Off";
                 LightOffDataTime = DateTime.Now;
             }
@@ -72,7 +72,7 @@ namespace SmartHouseSystem.Services
             HttpClient httpClient = new HttpClient();
             var headers = httpClient.DefaultRequestHeaders;
             var httpResponseBody = String.Empty;
-            Uri requestUri = new Uri($"http://192.168.1.119/control?cmd=STATUS,GPIO,14");
+            Uri requestUri = new Uri($"http://192.168.1.114/control?cmd=STATUS,GPIO,14");
 
             var httpResponse = new HttpResponseMessage();
             Debug.WriteLine("Check Status Test");
