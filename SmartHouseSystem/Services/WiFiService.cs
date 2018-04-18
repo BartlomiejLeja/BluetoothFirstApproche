@@ -12,13 +12,6 @@ namespace SmartHouseSystem.Services
         private HttpListener listener;
         private string cmd;
       
-        private DateTime lightOnDataTime;
-        private DateTime lightOffDataTime;
-
-        public DateTime LightOnDataTime { get=> lightOnDataTime; set { lightOnDataTime = value; LightOnDataTimeNotifyPropertyChanged(nameof(lightOnDataTime)); } }
-
-        public DateTime LightOffDataTime { get => lightOffDataTime; set { lightOffDataTime = value; LightOffDataTimeNotifyPropertyChanged(nameof(lightOffDataTime)); } }
-
         public string Cmd { get => cmd; set { cmd = value; CmdNotifyPropertyChanged(nameof(cmd)); } }
     
         public event PropertyChangedEventHandler PropertyChanged;
@@ -45,11 +38,9 @@ namespace SmartHouseSystem.Services
             {
               requestUri = new Uri($"http://192.168.1.114/control?cmd=GPIO,14,0");
                 Cmd = "On";
-              LightOnDataTime = DateTime.Now;
             }
             else { requestUri = new Uri($"http://192.168.1.114/control?cmd=GPIO,14,1");
                 Cmd = "Off";
-                LightOffDataTime = DateTime.Now;
             }
                
             var httpResponse = new HttpResponseMessage();
@@ -107,15 +98,6 @@ namespace SmartHouseSystem.Services
                 string[] urlRequestTab = (context.Request.Url).ToString().Split("=");
                 Cmd = urlRequestTab[urlRequestTab.Length-1];
                
-                if (Cmd == "On")
-                {
-                    LightOnDataTime = DateTime.Now;
-                }
-                if(Cmd =="Off")
-                {
-                    LightOffDataTime = DateTime.Now;
-                }
-
                 Debug.WriteLine(Cmd);
             }
         }

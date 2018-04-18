@@ -12,7 +12,6 @@ namespace SmartHouseSystem.Services
         string Cmd { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
         event PropertyChangedEventHandler PropertyChanged1;
-        DateTime LightOnDataTime { get; set; }
-        DateTime LightOffDataTime { get; set; }
+      
     }
 }

@@ -7,47 +7,21 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.System.Threading;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 
 namespace SmartHouseSystem.ViewModels
 {
     public class MainPageViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private bool isPaneOpen =false;
-
         private readonly INavigationService navigationService;
         private readonly IWiFiService wiFiService;
-        private readonly IGlobalDataStorageService globalDataStorageService;
-        public ICommand OpenHamburgerMenuCommand { get; private set; }
-        public ICommand CameraViewerPageCommand { get; private set; }
-        public ICommand ESPViewerPageCommand { get; private set; }
-        private DateTime OnLightTime;
-        private DateTime OffLightTime;
-        private bool endOfCounter= false;
-
-        private bool timerTriger;
-        public bool TimerTriger { get => timerTriger; set { timerTriger = value; TimerTrigerNotifyPropertyChanged(nameof(timerTriger)); } }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        internal void TimerTrigerNotifyPropertyChanged(String propertyName) =>
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
+        private readonly IChartService chartService;
+        
         public ICommand SignalRConnectionCommand { get; private set; }
        
         public ObservableCollection<StatusModel> statusList;
-
-        public bool IsPaneOpen
-        {
-            get { return isPaneOpen; }
-
-            set { SetProperty(ref isPaneOpen, value); }
-        }
-
+        
         public ObservableCollection<StatusModel> StatusList
         {
             get { return statusList; }
@@ -56,79 +30,35 @@ namespace SmartHouseSystem.ViewModels
         }
 
         public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, 
-            IWiFiService wiFiService, IGlobalDataStorageService globalDataStorageService)
+            IWiFiService wiFiService,  IChartService chartService)
         {
-            this.globalDataStorageService = globalDataStorageService;
-            var tempOn = wiFiService.LightOnDataTime;
-            var tempOff = wiFiService.LightOffDataTime;
-            globalDataStorageService.LightOnInMinutes(tempOn, tempOff);
-            StatusList = new ObservableCollection<StatusModel>
-            {
-                  new StatusModel("On",this.globalDataStorageService.BulbOnTimeInMinutes),
-                  new StatusModel("Off",this.globalDataStorageService.BulbOffTimeInMinutes ),
-            };
-            Debug.WriteLine("TestMainViewModel");
             this.navigationService = navigationService;
             this.wiFiService = wiFiService;
-         
-            OnLightTime = wiFiService.LightOnDataTime;
-            OffLightTime = wiFiService.LightOffDataTime;
-            //OpenHamburgerMenuCommand = new DelegateCommand(async () =>
-            //{
-            //    IsPaneOpen = !isPaneOpen;
-            //});
-           
-            OpenHamburgerMenuCommand = new DelegateCommand(HamburgerMenuButton);
-            CameraViewerPageCommand = new DelegateCommand(CameraViewerPage);
-            ESPViewerPageCommand = new DelegateCommand(LightControlerPage);
-            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
+            this.chartService = chartService;
             wiFiService.ListenHttpRequestsAsync();
-            wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
-            PropertyChanged += _wiFiService_PropertyChanged;
-            TimerTriger = true;
             signalRService.Connect(wiFiService);
+
+            StatusList = new ObservableCollection<StatusModel>
+            {
+                  new StatusModel("On",this.chartService.BulbOnTimeInMinutes),
+                  new StatusModel("Off",this.chartService.BulbOffTimeInMinutes ),
+            };
+            Debug.WriteLine("TestMainViewModel");
+           
+            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
+            
+            this.chartService.PropertyChanged1 += _wiFiService_PropertyChangedAsync;
         }
 
-        private void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e) //odjałem async
+        private async void _wiFiService_PropertyChangedAsync(object sender, PropertyChangedEventArgs e)
         {
-                TimeSpan delay = TimeSpan.FromSeconds(20);
-
-                ThreadPoolTimer DelayTimer = ThreadPoolTimer.CreatePeriodicTimer(
-                         async (source) =>
-                           {
-                               if (wiFiService.Cmd == "On" && endOfCounter == false)
-                               {
-                                   globalDataStorageService.BulbOffTimeInMinutes--;
-                                   globalDataStorageService.BulbOnTimeInMinutes++;
-                                   await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                                    () =>
-                                         {
-                                             //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
-                                             StatusList.Clear();
-
-                                             StatusList.Add(new StatusModel("On", globalDataStorageService.BulbOnTimeInMinutes));
-                                             StatusList.Add(new StatusModel("Off", globalDataStorageService.BulbOffTimeInMinutes));
-                                         });
-                               }
-                           }, delay);
-            if (wiFiService.Cmd == "Off" || endOfCounter == true || wiFiService.Cmd == null )
-            { DelayTimer.Cancel(); };
-        }
-   
-        private void HamburgerMenuButton()
-        {
-            IsPaneOpen = !isPaneOpen;
-        }
-
-        private void CameraViewerPage()
-        {
-            endOfCounter = true;
-            navigationService.Navigate("CameraViewer", null);
-        }
-        private void LightControlerPage()
-        {
-            endOfCounter = true;
-            navigationService.Navigate("LightControler", null);
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                   () =>
+                       {
+                         StatusList.Clear();
+                         StatusList.Add(new StatusModel("On", chartService.BulbOnTimeInMinutes));
+                         StatusList.Add(new StatusModel("Off", chartService.BulbOffTimeInMinutes));
+                       });
         }
     }
 }

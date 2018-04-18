@@ -9,30 +9,6 @@
     prism:ViewModelLocator.AutoWireViewModel="True" 
     mc:Ignorable="d">
 
-    <SplitView x:Name="MySplitView" DisplayMode="CompactOverlay"  IsPaneOpen="{Binding IsPaneOpen, Mode=TwoWay}" 
-               CompactPaneLength="50" OpenPaneLength="150" >
-        <SplitView.Pane>
-            <StackPanel Background="Gray">
-                <Button x:Name="HamburgerButton" FontFamily="Segoe MDL2 Assets" Content="&#xE700;"
-                    Width="50" Height="50" Background="Transparent" Command="{Binding OpenHamburgerMenuCommand}"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="MenuButton1" FontFamily="Segoe MDL2 Assets" Content="&#xE825;"
-                    Width="50" Height="50" Background="Transparent" Command="{Binding CameraViewerPageCommand}" />
-                    <TextBlock Text="Button 1" FontSize="18" VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="MenuButton2" FontFamily="Segoe MDL2 Assets" Content="&#xE10F;"
-                        Width="50" Height="50" Background="Transparent" Command="{Binding ESPViewerPageCommand}"/>
-                    <TextBlock Text="Button 2" FontSize="18" VerticalAlignment="Center" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="MenuButton3" FontFamily="Segoe MDL2 Assets" Content="&#xE1D6;"
-                        Width="50" Height="50" Background="Transparent"/>
-                    <TextBlock Text="Button 3" FontSize="18" VerticalAlignment="Center" />
-                </StackPanel>
-            </StackPanel>
-        </SplitView.Pane>
-        <SplitView.Content>
             <Grid>
                 <Charting:Chart  
                      x:Name="PieChart"  
@@ -112,6 +88,5 @@
                 <Button  Width="50" Height="50" Command="{Binding  SignalRConnectionCommand}"/>
                 
             </Grid>
-        </SplitView.Content>
-    </SplitView>
+
 </prism:SessionStateAwarePage>

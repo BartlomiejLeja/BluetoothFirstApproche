@@ -29,8 +29,8 @@ namespace SmartHouseSystem.ViewModels
 
             MenuItemsList = new ObservableCollection<MenuItemViewModel>
             {
-                new MenuItemViewModel { DisplayName = "MainPageMenuItemDisplayName", FontIcon = "\ue15f", Command = new DelegateCommand(() => NavigateToPage(PageTokens.Main), () => CanNavigateToPage(PageTokens.Main)) },
-                new MenuItemViewModel { DisplayName = "SecondPageMenuItemDisplayName", FontIcon = "\ue19f", Command = new DelegateCommand(() => NavigateToPage(PageTokens.LightControler), () => CanNavigateToPage(PageTokens.LightControler)) }
+                new MenuItemViewModel { DisplayName = "Statistics", FontIcon = "\ue9d9", Command = new DelegateCommand(() => NavigateToPage(PageTokens.Main), () => CanNavigateToPage(PageTokens.Main)) },
+                new MenuItemViewModel { DisplayName = "Light control", FontIcon = "\ue781", Command = new DelegateCommand(() => NavigateToPage(PageTokens.LightControler), () => CanNavigateToPage(PageTokens.LightControler)) }
             };
 
             _canNavigateLookup = new Dictionary<PageTokens, bool>();
