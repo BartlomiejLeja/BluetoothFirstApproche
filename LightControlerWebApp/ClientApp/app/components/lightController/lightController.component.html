@@ -6,11 +6,11 @@
 <button (click)="lightUp()">LightUp</button>
 <!--<img src='./images/lightTurnOff.jpg' (click)="lightUp()"/>-->
 
-<div *ngIf="isLightOn">
+<div *ngIf="isLightOn==0">
     <button (click)="lightUp()"><img class="lightPhoto" src='./images/lightTurnOff.jpg' width="130" height="150"/> </button>
 </div>
 
-<div *ngIf="!isLightOn">
+<div *ngIf="!isLightOn==1">
     <button (click)="lightUp()"><img class="lightPhoto" src='./images/lightTurnOn.png' width="130" height="150" />  </button>
 </div>
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-public class LightModel
+﻿public class LightModel
 {
     public string log { get; set; }
     public int plugin { get; set; }

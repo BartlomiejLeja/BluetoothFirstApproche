@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -40,7 +41,8 @@ namespace SmartHouseSystem.Services
 
         public async Task InvokeSendMethod(string isOn)
         {
-            await connection.InvokeAsync("Send", isOn);
+            var lightStatus = JsonConvert.DeserializeObject<LightModel>(isOn);
+            await connection.InvokeAsync("Send", lightStatus.state);
         }
       
     }
