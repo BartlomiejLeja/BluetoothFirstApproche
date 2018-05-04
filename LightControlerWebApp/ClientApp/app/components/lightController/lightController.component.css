@@ -1,0 +1,18 @@
+﻿.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color:blue;
+    border-color:red;
+}
+
+.button {
+    background-color: blue;
+    border-color: #8064A2;
+}
+
+.lightPhoto {
+    width: 130px;
+    height: 150px;
+}

@@ -16,6 +16,7 @@ namespace SmartHouseSystem.Services
         public bool IsTimerOn { get => isTimerOn; set { isTimerOn = value; TimerTrigerNotifyPropertyChanged(nameof(isTimerOn)); } }
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangedEventHandler PropertyChanged1;
+        private DateTime firstDate;
 
         internal void BulbOnTimeTrigerNotifyPropertyChanged(String propertyName) =>
         PropertyChanged1?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -24,7 +25,8 @@ namespace SmartHouseSystem.Services
 
         public ChartService()
         {
-            PropertyChanged += ChartService_PropertyChanged;   
+            PropertyChanged += ChartService_PropertyChanged;
+            firstDate = DateTime.Now;
         }
         
         private void ChartService_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -34,13 +36,23 @@ namespace SmartHouseSystem.Services
             ThreadPoolTimer DelayTimer = ThreadPoolTimer.CreatePeriodicTimer(
                      (source) =>
                      {
-                         if (isTimerOn == true)
+                         if (isTimerOn == true )
                          {
-                             //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
-                             BulbOffTimeInMinutes--;
-                             BulbOnTimeInMinutes++;
-                             Debug.WriteLine($"Value of bulbOffTimeInMinutes changed, new value {BulbOffTimeInMinutes} and bulbOffTimeInMinutes changed, new value {BulbOnTimeInMinutes} date: {DateTime.Now}");
+                             if (firstDate.Day == DateTime.Now.Day)
+                             {
+                                 //HOW TO OBSERVE PROPERTIES IN OBSERVABLE LIST !!!!!???
+                                 BulbOffTimeInMinutes--;
+                                 BulbOnTimeInMinutes++;
+                                 Debug.WriteLine($"Value of bulbOffTimeInMinutes changed, new value {BulbOffTimeInMinutes} and bulbOffTimeInMinutes changed, new value {BulbOnTimeInMinutes} date: {DateTime.Now}");
+                             }
+                             else
+                             {
+                                 BulbOffTimeInMinutes = 1439;
+                                 BulbOnTimeInMinutes = 1;
+                                 firstDate = DateTime.Now;
+                             }
                          }
+
                      }, delay);
             if (isTimerOn == false)
             { DelayTimer.Cancel(); };

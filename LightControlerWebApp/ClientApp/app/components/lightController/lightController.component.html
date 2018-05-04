@@ -1,0 +1,16 @@
+<h1>Control your light</h1>
+
+<p>Press bulb if you want to switch on or switch off light</p>
+
+<button (click)="incrementCounter()">Increment</button>
+<button (click)="lightUp()">LightUp</button>
+<!--<img src='./images/lightTurnOff.jpg' (click)="lightUp()"/>-->
+
+<div *ngIf="isLightOn">
+    <button (click)="lightUp()"><img class="lightPhoto" src='./images/lightTurnOff.jpg' width="130" height="150"/> </button>
+</div>
+
+<div *ngIf="!isLightOn">
+    <button (click)="lightUp()"><img class="lightPhoto" src='./images/lightTurnOn.png' width="130" height="150" />  </button>
+</div>
+

@@ -110,6 +110,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\LightModel.cs" />
+    <Compile Include="Model\PowerUsageModel.cs" />
     <Compile Include="Model\StatusModel.cs" />
     <Compile Include="PageTokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,13 +6,15 @@ using System.Windows.Input;
 using System;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using Windows.UI.Core;
 
 namespace SmartHouseSystem.ViewModels
 {
     public class LightControlerPageViewModel : ViewModelBase
     {
         private IWiFiService _wiFiService;
-     
+        private IChartService _chartService;
+
         private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
         private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
 
@@ -32,7 +34,8 @@ namespace SmartHouseSystem.ViewModels
             Debug.WriteLine("TestViewModelInsideConstructor");
          
             _wiFiService = wiFiService;
-            
+            _chartService = chartService;
+
             var pinStatusJason = _wiFiService.CheckStatusOfLight().GetAwaiter().GetResult();
          
             lightState = Convert.ToBoolean(JsonConvert.DeserializeObject<LightModel>(pinStatusJason).state);
@@ -42,17 +45,21 @@ namespace SmartHouseSystem.ViewModels
             ChangeLightState = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
                 lightState = !lightState;
                 uriSourceChanger(lightState);
-                chartService.IsTimerOn = !lightState;
             });
 
            // _wiFiService.ListenHttpRequestsAsync();
             _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
         }
 
-        private void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            uriSourceChanger(_wiFiService.Cmd == "Off");
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                  () =>
+                  {
+                            uriSourceChanger(_wiFiService.Cmd == "Off");
+                  });
         }
+
 
         private void uriSourceChanger(bool lightState)
         {

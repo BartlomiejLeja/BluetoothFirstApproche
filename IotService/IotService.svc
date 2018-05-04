@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="IotService.IotService" CodeBehind="IotService.svc.cs" %>

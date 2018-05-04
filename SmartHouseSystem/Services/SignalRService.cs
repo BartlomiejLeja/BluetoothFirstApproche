@@ -24,16 +24,23 @@ namespace SmartHouseSystem.Services
             connection.On<bool>("TurnOnLight", async data =>
             {
                 Debug.WriteLine("You light up light");
-                await wiFiService.SendHttpRequestAsync(data);
+                await wiFiService.SendHttpRequestAsync(data);  
             }
             );
 
-            await connection.StartAsync();           
+            connection.On<bool>("CheckStatus", async data=>
+            {
+                Debug.WriteLine("Cheking status in uwp app");
+                var isOn= await wiFiService.CheckStatusOfLight();
+                await InvokeSendMethod(isOn);
+            });
+
+            await connection.StartAsync();
         }
 
-        public async Task InvokeSendMethod()
+        public async Task InvokeSendMethod(string isOn)
         {
-            await connection.InvokeAsync("Send", "Test method from UWP client");
+            await connection.InvokeAsync("Send", isOn);
         }
       
     }

@@ -3,29 +3,32 @@ using Prism.Events;
 using Prism.Windows.AppModel;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
+using SmartHouseSystem.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartHouseSystem.ViewModels
 {
-   public class SplitViewMenuPageViewModel : ViewModelBase
+    public class SplitViewMenuPageViewModel : ViewModelBase
     {
         private const string CurrentPageTokenKey = "CurrentPageToken";
         private Dictionary<PageTokens, bool> _canNavigateLookup;
         private PageTokens _currentPageToken;
         private INavigationService _navigationService;
         private ISessionStateService _sessionStateService;
+        private IWiFiService _wifiService;
+        private IChartService _chartService;
         public ObservableCollection<MenuItemViewModel> MenuItemsList { get; set; }
 
-        public SplitViewMenuPageViewModel(IEventAggregator eventAggregator, INavigationService navigationService, ISessionStateService sessionStateService)
+        public SplitViewMenuPageViewModel(IEventAggregator eventAggregator, INavigationService navigationService, ISessionStateService sessionStateService,
+           IWiFiService wiFiService, IChartService chartService )
         {
             eventAggregator.GetEvent<NavigationStateChangedEvent>().Subscribe(OnNavigationStateChanged);
             _navigationService = navigationService;
             _sessionStateService = sessionStateService;
+            _wifiService = wiFiService;
+            _chartService = chartService;
 
             MenuItemsList = new ObservableCollection<MenuItemViewModel>
             {
@@ -50,6 +53,15 @@ namespace SmartHouseSystem.ViewModels
                     RaiseCanExecuteChanged();
                 }
             }
+            _wifiService.PropertyChanged += _wifiService_PropertyChanged;
+        }
+
+        private void _wifiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_wifiService.Cmd == "On")
+                _chartService.IsTimerOn = true;
+            if (_wifiService.Cmd == "Off")
+                _chartService.IsTimerOn = false;
         }
 
         private void OnNavigationStateChanged(NavigationStateChangedEventArgs args)

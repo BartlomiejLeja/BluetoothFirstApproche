@@ -34,6 +34,12 @@ namespace SignalIRServer.Hubs
             Console.WriteLine("TrigerLightSevice");
             return Clients.Others.SendAsync("TurnOnLight",isLightOn);
         }
+
+        public Task CheckStatusOfLight()
+        {
+            Console.WriteLine("CheckingStatusOfLight");
+            return Clients.Others.SendAsync("CheckStatus",true);
+        }
     }
 
     public interface IBroadcaster

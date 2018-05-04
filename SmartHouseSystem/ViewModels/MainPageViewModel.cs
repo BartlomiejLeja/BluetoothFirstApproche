@@ -17,16 +17,26 @@ namespace SmartHouseSystem.ViewModels
         private readonly INavigationService navigationService;
         private readonly IWiFiService wiFiService;
         private readonly IChartService chartService;
-        
+        private double powerOfLightBulbInKiloWats = 0.01;
+        private double usageOffPower;
+
         public ICommand SignalRConnectionCommand { get; private set; }
        
         public ObservableCollection<StatusModel> statusList;
-        
+        public ObservableCollection<PowerUsageModel> powerUsageList;
+
         public ObservableCollection<StatusModel> StatusList
         {
             get { return statusList; }
 
             set { SetProperty(ref statusList, value); }
+        }
+
+        public ObservableCollection<PowerUsageModel> PowerUsageList
+        {
+            get { return powerUsageList; }
+
+            set { SetProperty(ref powerUsageList, value); }
         }
 
         public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, 
@@ -37,15 +47,20 @@ namespace SmartHouseSystem.ViewModels
             this.chartService = chartService;
             wiFiService.ListenHttpRequestsAsync();
             signalRService.Connect(wiFiService);
-
+          
             StatusList = new ObservableCollection<StatusModel>
             {
                   new StatusModel("On",this.chartService.BulbOnTimeInMinutes),
                   new StatusModel("Off",this.chartService.BulbOffTimeInMinutes ),
             };
+            usageOffPower = (this.chartService.BulbOnTimeInMinutes / 60) * powerOfLightBulbInKiloWats;
+            PowerUsageList = new ObservableCollection<PowerUsageModel>
+            {
+                new PowerUsageModel(usageOffPower,"Wtorek")
+            };
             Debug.WriteLine("TestMainViewModel");
            
-            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod());
+            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod("Lol"));
             
             this.chartService.PropertyChanged1 += _wiFiService_PropertyChangedAsync;
         }
@@ -58,6 +73,9 @@ namespace SmartHouseSystem.ViewModels
                          StatusList.Clear();
                          StatusList.Add(new StatusModel("On", chartService.BulbOnTimeInMinutes));
                          StatusList.Add(new StatusModel("Off", chartService.BulbOffTimeInMinutes));
+                         usageOffPower = (Convert.ToDouble(chartService.BulbOnTimeInMinutes) / 60) * powerOfLightBulbInKiloWats;
+                         PowerUsageList.Clear();
+                         PowerUsageList.Add(new PowerUsageModel(usageOffPower, "Wtorek")); 
                        });
         }
     }
