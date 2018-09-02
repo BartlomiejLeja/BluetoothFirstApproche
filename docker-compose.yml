@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  newestsignalrservice:
+    image: ${DOCKER_REGISTRY}newestsignalrservice
+    build:
+      context: .
+      dockerfile: NewestSignalRService\Dockerfile

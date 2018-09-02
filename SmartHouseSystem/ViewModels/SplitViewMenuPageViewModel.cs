@@ -53,16 +53,16 @@ namespace SmartHouseSystem.ViewModels
                     RaiseCanExecuteChanged();
                 }
             }
-            _wifiService.PropertyChanged += _wifiService_PropertyChanged;
+       //     _wifiService.PropertyChanged += _wifiService_PropertyChanged;
         }
 
-        private void _wifiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (_wifiService.Cmd == "On")
-                _chartService.IsTimerOn = true;
-            if (_wifiService.Cmd == "Off")
-                _chartService.IsTimerOn = false;
-        }
+//        private void _wifiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+//        {
+//            if (_wifiService.Cmd == "On")
+//                _chartService.IsTimerOn = true;
+//            if (_wifiService.Cmd == "Off")
+//                _chartService.IsTimerOn = false;
+//        }
 
         private void OnNavigationStateChanged(NavigationStateChangedEventArgs args)
         {

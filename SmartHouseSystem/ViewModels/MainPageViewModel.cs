@@ -17,8 +17,10 @@ namespace SmartHouseSystem.ViewModels
         private readonly INavigationService navigationService;
         private readonly IWiFiService wiFiService;
         private readonly IChartService chartService;
-        private double powerOfLightBulbInKiloWats = 0.01;
-        private double usageOffPower;
+        private readonly ISignalRService signalRService;
+        private readonly ILightService lightService;
+        private  double powerOfLightBulbInKiloWats = 0.01;
+        private  double usageOffPower;
 
         public ICommand SignalRConnectionCommand { get; private set; }
        
@@ -40,14 +42,16 @@ namespace SmartHouseSystem.ViewModels
         }
 
         public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, 
-            IWiFiService wiFiService,  IChartService chartService)
+            IWiFiService wiFiService,  IChartService chartService, ILightService lightService)
         {
             this.navigationService = navigationService;
             this.wiFiService = wiFiService;
             this.chartService = chartService;
+            this.lightService = lightService;
+            this.signalRService = signalRService;
             wiFiService.ListenHttpRequestsAsync();
-            signalRService.Connect(wiFiService);
-          
+         
+            signalRService.Connect(wiFiService, chartService, lightService);
             StatusList = new ObservableCollection<StatusModel>
             {
                   new StatusModel("On",this.chartService.BulbOnTimeInMinutes),
@@ -59,24 +63,27 @@ namespace SmartHouseSystem.ViewModels
                 new PowerUsageModel(usageOffPower,"Wtorek")
             };
             Debug.WriteLine("TestMainViewModel");
-           
-            SignalRConnectionCommand = new DelegateCommand(() => signalRService.InvokeSendMethod("Lol"));
+        
             
             this.chartService.PropertyChanged1 += _wiFiService_PropertyChangedAsync;
         }
 
         private async void _wiFiService_PropertyChangedAsync(object sender, PropertyChangedEventArgs e)
         {
+          //  await signalRService.InvokeSendStaticticData(chartService.BulbOnTimeInMinutes, chartService.BulbOffTimeInMinutes);
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                    () =>
                        {
                          StatusList.Clear();
-                         StatusList.Add(new StatusModel("On", chartService.BulbOnTimeInMinutes));
-                         StatusList.Add(new StatusModel("Off", chartService.BulbOffTimeInMinutes));
+                           //Create list of Status list check if
+                         StatusList.Add(new StatusModel("On", chartService.Lights[0].BulbOnTimeInMinutes));
+                         StatusList.Add(new StatusModel("Off", chartService.Lights[0].BulbOffTimeInMinutes));
+                        
                          usageOffPower = (Convert.ToDouble(chartService.BulbOnTimeInMinutes) / 60) * powerOfLightBulbInKiloWats;
                          PowerUsageList.Clear();
                          PowerUsageList.Add(new PowerUsageModel(usageOffPower, "Wtorek")); 
                        });
+           
         }
     }
 }

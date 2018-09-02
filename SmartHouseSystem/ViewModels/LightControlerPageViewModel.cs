@@ -2,10 +2,10 @@
 using Prism.Windows.Mvvm;
 using SmartHouseSystem.Services;
 using System.Diagnostics;
-using System.Windows.Input;
 using System;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Linq;
 using Windows.UI.Core;
 
 namespace SmartHouseSystem.ViewModels
@@ -14,14 +14,16 @@ namespace SmartHouseSystem.ViewModels
     {
         private IWiFiService _wiFiService;
         private IChartService _chartService;
+        private ISignalRService _signalRService;
 
         private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
         private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
 
-        public ICommand ChangeLightState { get; private set; }
-        public DelegateCommand LightOfCommand { get; private set; }
+        public DelegateCommand<string> ChangeLightState { get; private set; }
+     
         private string _uriSource;
-        private bool lightState;
+        private string _uriSource1;
+        private bool lightState=false;
 
         public string UriSource
         {
@@ -29,26 +31,37 @@ namespace SmartHouseSystem.ViewModels
             set => SetProperty(ref _uriSource, value);
         }
 
-        public LightControlerPageViewModel(IWiFiService wiFiService,  IChartService chartService)
+        public string UriSource1
+        {
+            get { return _uriSource1; }
+            set => SetProperty(ref _uriSource1, value);
+        }
+
+
+        public LightControlerPageViewModel(IChartService chartService, ISignalRService signalRService, ILightService lightService)
         {
             Debug.WriteLine("TestViewModelInsideConstructor");
          
-            _wiFiService = wiFiService;
             _chartService = chartService;
+            _signalRService = signalRService;
+           
+            signalRService.InvokeCheckStatusOfLights(true);
 
-            var pinStatusJason = _wiFiService.CheckStatusOfLight().GetAwaiter().GetResult();
-         
-            lightState = Convert.ToBoolean(JsonConvert.DeserializeObject<LightModel>(pinStatusJason).state);
-     
-            uriSourceChanger(lightState);
-
-            ChangeLightState = new DelegateCommand(async () => { await _wiFiService.SendHttpRequestAsync(lightState);
-                lightState = !lightState;
-                uriSourceChanger(lightState);
+            foreach (var light in lightService.StatusModels)
+            {
+                uriSourceChanger(light.LightStatus,light.ID);
+            }
+           
+            ChangeLightState = new DelegateCommand<string>(async (args) =>
+            {
+                lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus = !lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus;
+                await signalRService.InvokeTurnOnLight(lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus, Int32.Parse(args));
+       
+                uriSourceChanger(lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus, Int32.Parse(args));
             });
-
-           // _wiFiService.ListenHttpRequestsAsync();
-            _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
+            
+            // _wiFiService.ListenHttpRequestsAsync();
+         //   _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
         }
 
         private async void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -56,14 +69,22 @@ namespace SmartHouseSystem.ViewModels
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                   () =>
                   {
-                            uriSourceChanger(_wiFiService.Cmd == "Off");
+                      //      uriSourceChanger(_wiFiService.Cmd == "Off");
                   });
         }
-
-
-        private void uriSourceChanger(bool lightState)
+        
+        private void uriSourceChanger(bool lightState, int lightID)
         {
-            UriSource= lightState ? lightOff : lightOn;
+            switch (lightID)
+            {
+                case 124:
+                    UriSource= lightState ? lightOn : lightOff;
+                    break;
+                case 125:
+                    UriSource1 = lightState ? lightOn : lightOff;
+                    break;
+            }
         }
     }
 }
+

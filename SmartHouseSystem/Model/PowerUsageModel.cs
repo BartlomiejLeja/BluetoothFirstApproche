@@ -2,7 +2,6 @@
 {
    public class PowerUsageModel
     {
-
         public PowerUsageModel(double kilowattHour, string day)
         {
             Day = day;

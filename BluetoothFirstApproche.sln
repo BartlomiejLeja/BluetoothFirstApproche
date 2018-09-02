@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHouseSystem", "SmartHo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalIRServer", "SignalIRServer\SignalIRServer.csproj", "{0ED28B0D-4578-4B87-B800-260E39670A3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightControlerWebApp", "LightControlerWebApp\LightControlerWebApp.csproj", "{52EB6BB3-5345-4257-BCD2-5CB64BB22285}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,22 +55,6 @@ Global
 		{0ED28B0D-4578-4B87-B800-260E39670A3A}.Release|x64.Build.0 = Release|Any CPU
 		{0ED28B0D-4578-4B87-B800-260E39670A3A}.Release|x86.ActiveCfg = Release|Any CPU
 		{0ED28B0D-4578-4B87-B800-260E39670A3A}.Release|x86.Build.0 = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|ARM.Build.0 = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|x64.Build.0 = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Debug|x86.Build.0 = Debug|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|ARM.ActiveCfg = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|ARM.Build.0 = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|x64.ActiveCfg = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|x64.Build.0 = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|x86.ActiveCfg = Release|Any CPU
-		{52EB6BB3-5345-4257-BCD2-5CB64BB22285}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using SignalIRServer.Model;
 
 namespace SignalIRServer.Hubs
 {
-   
-    public class Broadcaster :Hub
+    public class Broadcaster : Hub
     {
         //public override  Task OnConnectedAsync()
         //{
@@ -22,28 +21,28 @@ namespace SignalIRServer.Hubs
         {
             return Groups.RemoveAsync(Context.ConnectionId, clientName);
         }
-
-        public Task Send(string message)
-        {
-            Console.WriteLine("TestTestTEstETSTETSTETST");
-            return Clients.All.SendAsync("Send", message);
-        }
-
-        public Task ChangeLightState(bool isLightOn)
+        
+        public Task ChangeLightState(bool isLightOn, int lightNumber)
         {
             Console.WriteLine("TrigerLightSevice");
-            return Clients.Others.SendAsync("TurnOnLight",isLightOn);
+            return Clients.All.SendAsync("ChangeLightState", isLightOn, lightNumber);
         }
-
-        public Task CheckStatusOfLight()
+        
+        public Task CheckStatusOfLights(bool x)
         {
-            Console.WriteLine("CheckingStatusOfLight");
-            return Clients.Others.SendAsync("CheckStatus",true);
+            Console.WriteLine("CheckStatusOfLights");
+            return Clients.Others.SendAsync("CheckStatusOfLights", x);
         }
-    }
 
-    public interface IBroadcaster
-    {
-
-    }
+        public Task SendLightState(int lightID, bool lightStatus)
+        {
+            Console.WriteLine("SendLightState");
+            return Clients.Others.SendAsync("SendLightState", lightID,lightStatus);
+        }
+        public Task SendLightStatisticData(bool status, int lightNumber)
+        {
+            Console.WriteLine("SendLightStatisticData");
+            return Clients.Others.SendAsync("SendLightStatisticData", status, lightNumber);
+        }
+    }     
 }

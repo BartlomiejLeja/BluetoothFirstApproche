@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SmartHouseSystem.Services
@@ -12,6 +11,5 @@ namespace SmartHouseSystem.Services
         string Cmd { get; set; }
         event PropertyChangedEventHandler PropertyChanged;
         event PropertyChangedEventHandler PropertyChanged1;
-      
     }
 }

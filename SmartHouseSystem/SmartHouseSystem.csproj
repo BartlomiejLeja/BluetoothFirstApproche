@@ -110,14 +110,18 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\LightModel.cs" />
+    <Compile Include="Model\LightStatisticModel.cs" />
     <Compile Include="Model\PowerUsageModel.cs" />
     <Compile Include="Model\StatusModel.cs" />
+    <Compile Include="Model\StatusModel1.cs" />
     <Compile Include="PageTokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ChartService.cs" />
     <Compile Include="Services\IChartService.cs" />
+    <Compile Include="Services\ILightService.cs" />
     <Compile Include="Services\ISignalRService.cs" />
     <Compile Include="Services\IWiFiService.cs" />
+    <Compile Include="Services\LightService.cs" />
     <Compile Include="Services\SignalRService.cs" />
     <Compile Include="Services\WiFiService.cs" />
     <Compile Include="StringReciverEventArgs.cs" />
@@ -142,6 +146,10 @@
     <None Include="SmartHouseSystem_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\SplashScreen.scale-150.png" />
+    <Content Include="Assets\SplashScreen.scale-400.png" />
     <Content Include="Images\room.bmp" />
     <Content Include="Images\lightTurnOff.jpg" />
     <Content Include="Images\lightTurnOn.png" />

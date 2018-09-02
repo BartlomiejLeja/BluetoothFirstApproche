@@ -53,6 +53,7 @@ namespace SmartHouseSystem
             // Register MvvmAppBase services with the container so that view models can take dependencies on them
             _container.RegisterInstance<IWiFiService>(new WiFiService());
             _container.RegisterInstance<ISignalRService>(new SignalRService());
+            _container.RegisterInstance<ILightService>(new LightService());
             _container.RegisterInstance<IChartService>(new ChartService());
             _container.RegisterInstance<INavigationService>(NavigationService);
             _container.RegisterInstance<ISessionStateService>(SessionStateService);
