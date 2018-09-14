@@ -7,6 +7,9 @@ using SmartHouseSystem.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Windows.Media.SpeechRecognition;
 
 namespace SmartHouseSystem.ViewModels
 {
@@ -17,19 +20,27 @@ namespace SmartHouseSystem.ViewModels
         private PageTokens _currentPageToken;
         private INavigationService _navigationService;
         private ISessionStateService _sessionStateService;
-        private IWiFiService _wifiService;
         private IChartService _chartService;
+        private ILightService _lightService;
+        private ISpeechRecognizerService _speechRecognitionConstraint;
+        private ISignalRService _signalRService;
         public ObservableCollection<MenuItemViewModel> MenuItemsList { get; set; }
+        public Task Initialization { get; private set; }
 
         public SplitViewMenuPageViewModel(IEventAggregator eventAggregator, INavigationService navigationService, ISessionStateService sessionStateService,
-           IWiFiService wiFiService, IChartService chartService )
+           IChartService chartService, ISpeechRecognizerService speechRecognizerService, ISignalRService signalRService,ILightService lightService)
         {
             eventAggregator.GetEvent<NavigationStateChangedEvent>().Subscribe(OnNavigationStateChanged);
             _navigationService = navigationService;
             _sessionStateService = sessionStateService;
-            _wifiService = wiFiService;
             _chartService = chartService;
+            _speechRecognitionConstraint = speechRecognizerService;
+            _signalRService = signalRService;
+            _lightService = lightService;
+            // _signalRService.ConnectionBuilder(wiFiService, chartService, lightService);
 
+            Initialization = InitAsync();
+        
             MenuItemsList = new ObservableCollection<MenuItemViewModel>
             {
                 new MenuItemViewModel { DisplayName = "Statistics", FontIcon = "\ue9d9", Command = new DelegateCommand(() => NavigateToPage(PageTokens.Main), () => CanNavigateToPage(PageTokens.Main)) },
@@ -53,7 +64,8 @@ namespace SmartHouseSystem.ViewModels
                     RaiseCanExecuteChanged();
                 }
             }
-       //     _wifiService.PropertyChanged += _wifiService_PropertyChanged;
+
+            //     _wifiService.PropertyChanged += _wifiService_PropertyChanged;
         }
 
 //        private void _wifiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -64,6 +76,17 @@ namespace SmartHouseSystem.ViewModels
 //                _chartService.IsTimerOn = false;
 //        }
 
+        private async Task InitAsync()
+        {
+       //    await _signalRService.ConnectionBuilder( _chartService, _lightService);
+            await _speechRecognitionConstraint.SpeechRecognizerStartAsync(_signalRService);
+            if (_speechRecognitionConstraint.speechRecognizer.State == SpeechRecognizerState.Idle)
+            {
+                await _speechRecognitionConstraint.speechRecognizer.ContinuousRecognitionSession.StartAsync();
+            }
+            else
+                Debug.WriteLine("Dupa");
+        }
         private void OnNavigationStateChanged(NavigationStateChangedEventArgs args)
         {
             PageTokens currentPageToken;

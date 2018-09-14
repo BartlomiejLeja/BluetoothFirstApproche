@@ -7,7 +7,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Media.SpeechRecognition;
 using Windows.UI.Core;
 
 namespace SmartHouseSystem.ViewModels
@@ -15,15 +17,16 @@ namespace SmartHouseSystem.ViewModels
     public class MainPageViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private readonly INavigationService navigationService;
-        private readonly IWiFiService wiFiService;
         private readonly IChartService chartService;
         private readonly ISignalRService signalRService;
         private readonly ILightService lightService;
         private  double powerOfLightBulbInKiloWats = 0.01;
         private  double usageOffPower;
+        public Task Initialization { get; private set; }
 
-        public ICommand SignalRConnectionCommand { get; private set; }
-       
+        public DelegateCommand SpeechTest { get; private set; }
+
+
         public ObservableCollection<StatusModel> statusList;
         public ObservableCollection<PowerUsageModel> powerUsageList;
 
@@ -42,16 +45,17 @@ namespace SmartHouseSystem.ViewModels
         }
 
         public MainPageViewModel(INavigationService navigationService, ISignalRService signalRService, 
-            IWiFiService wiFiService,  IChartService chartService, ILightService lightService)
+            IChartService chartService, ILightService lightService)
         {
             this.navigationService = navigationService;
-            this.wiFiService = wiFiService;
             this.chartService = chartService;
             this.lightService = lightService;
             this.signalRService = signalRService;
-            wiFiService.ListenHttpRequestsAsync();
-         
-            signalRService.Connect(wiFiService, chartService, lightService);
+            // wiFiService.ListenHttpRequestsAsync();
+
+        Initialization = InitAsync();
+            //signalRService.InvokeCheckStatusOfLights(true);
+
             StatusList = new ObservableCollection<StatusModel>
             {
                   new StatusModel("On",this.chartService.BulbOnTimeInMinutes),
@@ -62,10 +66,16 @@ namespace SmartHouseSystem.ViewModels
             {
                 new PowerUsageModel(usageOffPower,"Wtorek")
             };
+            SpeechTest = new DelegateCommand(async () => { await signalRService.ConnectionBuilder( chartService, lightService); });
+
             Debug.WriteLine("TestMainViewModel");
         
-            
-            this.chartService.PropertyChanged1 += _wiFiService_PropertyChangedAsync;
+           // this.chartService.PropertyChanged1 += _wiFiService_PropertyChangedAsync;
+        }
+
+        private async Task InitAsync()
+        {
+            await signalRService.InvokeCheckStatusOfLights(true);
         }
 
         private async void _wiFiService_PropertyChangedAsync(object sender, PropertyChangedEventArgs e)
@@ -83,7 +93,6 @@ namespace SmartHouseSystem.ViewModels
                          PowerUsageList.Clear();
                          PowerUsageList.Add(new PowerUsageModel(usageOffPower, "Wtorek")); 
                        });
-           
         }
     }
 }

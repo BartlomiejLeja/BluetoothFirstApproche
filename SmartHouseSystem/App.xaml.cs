@@ -22,6 +22,9 @@ namespace SmartHouseSystem
     public sealed partial class App : PrismUnityApplication
     {
         IUnityContainer _container = new UnityContainer();
+      ISignalRService _signalRService =new SignalRService();
+        private ILightService _lightService = new LightService();
+        private IChartService _chartService = new ChartService();
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,22 +42,33 @@ namespace SmartHouseSystem
         }
         protected override Task OnLaunchApplicationAsync(LaunchActivatedEventArgs args)
         {
+            _signalRService.ConnectionBuilder(_chartService, _lightService);
+            _signalRService.PropertyChanged += _signalRService_PropertyChanged;
+
             NavigationService.Navigate("Main", null);
-            
+
             Window.Current.Activate();
 
             return Task.FromResult<object>(null);
         }
-        
+
+        private void _signalRService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_signalRService.ConnectionState1 == SignalRService.ConnectionState.Connected)
+            {
+                _signalRService.InvokeCheckStatusOfLights(true);
+            }
+        }
+
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             System.Diagnostics.Debug.WriteLine(">>>>>>>>>>>>> OnInitializeAsync called.");
 
             // Register MvvmAppBase services with the container so that view models can take dependencies on them
-            _container.RegisterInstance<IWiFiService>(new WiFiService());
-            _container.RegisterInstance<ISignalRService>(new SignalRService());
-            _container.RegisterInstance<ILightService>(new LightService());
-            _container.RegisterInstance<IChartService>(new ChartService());
+            _container.RegisterInstance(_signalRService);
+            _container.RegisterInstance<ILightService>(_lightService);
+            _container.RegisterInstance<IChartService>(_chartService);
+            _container.RegisterInstance<ISpeechRecognizerService>(new SpeechRecognizerService());
             _container.RegisterInstance<INavigationService>(NavigationService);
             _container.RegisterInstance<ISessionStateService>(SessionStateService);
             _container.RegisterInstance<IEventAggregator>(EventAggregator);
@@ -63,6 +77,7 @@ namespace SmartHouseSystem
             // Set a factory for the ViewModelLocator to use the container to construct view models so their 
             // dependencies get injected by the container
             ViewModelLocationProvider.SetDefaultViewModelFactory((viewModelType) => _container.Resolve(viewModelType));
+     
 
             return base.OnInitializeAsync(args);
         }

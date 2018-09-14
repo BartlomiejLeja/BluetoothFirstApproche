@@ -120,10 +120,11 @@
     <Compile Include="Services\IChartService.cs" />
     <Compile Include="Services\ILightService.cs" />
     <Compile Include="Services\ISignalRService.cs" />
-    <Compile Include="Services\IWiFiService.cs" />
+    <Compile Include="Services\ISpeechRecognizerService.cs" />
     <Compile Include="Services\LightService.cs" />
     <Compile Include="Services\SignalRService.cs" />
-    <Compile Include="Services\WiFiService.cs" />
+    <Compile Include="Services\SpeechRecognizerService.cs" />
+    <Compile Include="SpeechRecognition\AudioCapturePermissions.cs" />
     <Compile Include="StringReciverEventArgs.cs" />
     <Compile Include="ViewModels\LightControlerPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
@@ -161,6 +162,9 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="SRGS\grammar.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -226,7 +230,9 @@
       <HintPath>..\AForge.Net\Release\AForge.Video.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

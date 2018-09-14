@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<grammar xml:lang="en-GB" root="automationCommands"
+         tag-format="semantics/1.0" version="1.0"
+         xmlns="http://www.w3.org/2001/06/grammar">
+
+  <rule id="automationCommands">
+    <item>
+      <item>
+        <ruleref uri="#lightID" />
+        <tag> out.lightID=rules.latest(); </tag>
+      </item>
+      <item>
+        <ruleref uri="#action" />
+        <tag> out.action=rules.latest(); </tag>
+      </item>
+    </item>
+  </rule>
+
+  <rule id="lightID">
+   <item>
+    <one-of>
+      <item>
+        <tag> out="ONE"; </tag>
+        <one-of>
+          <item>one</item>
+        </one-of>
+      </item>
+      <item>
+        <tag> out="THREE"; </tag>
+        <one-of>
+          <item>three</item>
+        </one-of>
+      </item>
+    </one-of>
+   </item>
+  </rule>
+
+  <rule id="action">
+    <item>
+      <one-of>
+        <item>
+          <tag> out="ON"; </tag>
+          <one-of>
+            <item>on</item>
+          </one-of>
+        </item>
+        <item>
+          <tag> out="OFF"; </tag>
+          <one-of>
+            <item>off</item>
+          </one-of>
+        </item>
+      </one-of>
+    </item>
+  </rule>
+</grammar>

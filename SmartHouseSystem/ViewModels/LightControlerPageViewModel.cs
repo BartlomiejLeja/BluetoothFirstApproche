@@ -3,18 +3,18 @@ using Prism.Windows.Mvvm;
 using SmartHouseSystem.Services;
 using System.Diagnostics;
 using System;
-using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.UI.Core;
 
 namespace SmartHouseSystem.ViewModels
 {
     public class LightControlerPageViewModel : ViewModelBase
     {
-        private IWiFiService _wiFiService;
-        private IChartService _chartService;
         private ISignalRService _signalRService;
+        private ILightService _lightService;
 
         private static string lightOn = "ms-appx:///Images/lightTurnOn.png";
         private static string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
@@ -23,12 +23,21 @@ namespace SmartHouseSystem.ViewModels
      
         private string _uriSource;
         private string _uriSource1;
-        private bool lightState=false;
-
+   
         public string UriSource
         {
             get { return _uriSource; }
-            set => SetProperty(ref _uriSource, value);
+            set
+            {
+                SetProperty(ref _uriSource, value);
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public string UriSource1
@@ -36,41 +45,39 @@ namespace SmartHouseSystem.ViewModels
             get { return _uriSource1; }
             set => SetProperty(ref _uriSource1, value);
         }
+        public Task Initialization { get; private set; }
 
-
-        public LightControlerPageViewModel(IChartService chartService, ISignalRService signalRService, ILightService lightService)
+        public LightControlerPageViewModel( ISignalRService signalRService, ILightService lightService)
         {
             Debug.WriteLine("TestViewModelInsideConstructor");
-         
-            _chartService = chartService;
             _signalRService = signalRService;
-           
-            signalRService.InvokeCheckStatusOfLights(true);
+            _lightService = lightService;
+            Initialization = InitAsync();
 
             foreach (var light in lightService.StatusModels)
             {
                 uriSourceChanger(light.LightStatus,light.ID);
             }
-           
+
             ChangeLightState = new DelegateCommand<string>(async (args) =>
             {
                 lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus = !lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus;
                 await signalRService.InvokeTurnOnLight(lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus, Int32.Parse(args));
-       
-                uriSourceChanger(lightService.StatusModels.First(light => light.ID == Int32.Parse(args)).LightStatus, Int32.Parse(args));
             });
             
-            // _wiFiService.ListenHttpRequestsAsync();
-         //   _wiFiService.PropertyChanged += _wiFiService_PropertyChanged;
+            lightService.PropertyChanged += LightService_PropertyChanged;
         }
 
-        private async void _wiFiService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void LightService_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                  () =>
-                  {
-                      //      uriSourceChanger(_wiFiService.Cmd == "Off");
-                  });
+                () =>
+                {
+                    foreach (var statsuModel in _lightService.StatusModels)
+                    {
+                        uriSourceChanger(statsuModel.LightStatus, statsuModel.ID);
+                    }
+                });
         }
         
         private void uriSourceChanger(bool lightState, int lightID)
@@ -83,6 +90,15 @@ namespace SmartHouseSystem.ViewModels
                 case 125:
                     UriSource1 = lightState ? lightOn : lightOff;
                     break;
+            }
+        }
+
+        private async Task InitAsync()
+        {
+            await _signalRService.InvokeCheckStatusOfLights(true);
+            foreach (var light in _lightService.StatusModels)
+            {
+                uriSourceChanger(light.LightStatus, light.ID);
             }
         }
     }
