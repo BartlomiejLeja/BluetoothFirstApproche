@@ -6,10 +6,12 @@ namespace SmartHouseSystem.Services
 {
     public interface ILightService
     {
-        ObservableCollection<StatusModel1> StatusModels { get; set; }
-
+        ObservableCollection<LightModel> LightModelList { get; set; }
+     
         void InitNotificationOfChange(int lightId);
 
-        event PropertyChangedEventHandler PropertyChanged;
+        event PropertyChangedEventHandler StatusOfLightPropertyChanged;
+        event PropertyChangedEventHandler BulbTimePropertyChanged;
+
     }
 }

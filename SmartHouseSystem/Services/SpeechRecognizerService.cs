@@ -10,9 +10,6 @@ using Windows.Storage;
 using Windows.UI.Core;
 using SmartHouseSystem.SpeechRecognition;
 
-/// <summary>
-/// Handel exiting from listning
-/// </summary>
 namespace SmartHouseSystem.Services
 {
     public class SpeechRecognizerService : ISpeechRecognizerService

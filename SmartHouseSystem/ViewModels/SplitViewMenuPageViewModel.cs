@@ -3,44 +3,27 @@ using Prism.Events;
 using Prism.Windows.AppModel;
 using Prism.Windows.Mvvm;
 using Prism.Windows.Navigation;
-using SmartHouseSystem.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Windows.Media.SpeechRecognition;
 
 namespace SmartHouseSystem.ViewModels
 {
     public class SplitViewMenuPageViewModel : ViewModelBase
     {
         private const string CurrentPageTokenKey = "CurrentPageToken";
-        private Dictionary<PageTokens, bool> _canNavigateLookup;
+        private readonly Dictionary<PageTokens, bool> _canNavigateLookup;
         private PageTokens _currentPageToken;
-        private INavigationService _navigationService;
-        private ISessionStateService _sessionStateService;
-        private IChartService _chartService;
-        private ILightService _lightService;
-        private ISpeechRecognizerService _speechRecognitionConstraint;
-        private ISignalRService _signalRService;
+        private readonly INavigationService _navigationService;
+        private readonly ISessionStateService _sessionStateService;
         public ObservableCollection<MenuItemViewModel> MenuItemsList { get; set; }
-        public Task Initialization { get; private set; }
 
-        public SplitViewMenuPageViewModel(IEventAggregator eventAggregator, INavigationService navigationService, ISessionStateService sessionStateService,
-           IChartService chartService, ISpeechRecognizerService speechRecognizerService, ISignalRService signalRService,ILightService lightService)
+        public SplitViewMenuPageViewModel(IEventAggregator eventAggregator, INavigationService navigationService, ISessionStateService sessionStateService)
         {
             eventAggregator.GetEvent<NavigationStateChangedEvent>().Subscribe(OnNavigationStateChanged);
             _navigationService = navigationService;
             _sessionStateService = sessionStateService;
-            _chartService = chartService;
-            _speechRecognitionConstraint = speechRecognizerService;
-            _signalRService = signalRService;
-            _lightService = lightService;
-            // _signalRService.ConnectionBuilder(wiFiService, chartService, lightService);
-
-            Initialization = InitAsync();
-        
+          
             MenuItemsList = new ObservableCollection<MenuItemViewModel>
             {
                 new MenuItemViewModel { DisplayName = "Statistics", FontIcon = "\ue9d9", Command = new DelegateCommand(() => NavigateToPage(PageTokens.Main), () => CanNavigateToPage(PageTokens.Main)) },
@@ -54,60 +37,29 @@ namespace SmartHouseSystem.ViewModels
                 _canNavigateLookup.Add(pageToken, true);
             }
 
-            if (_sessionStateService.SessionState.ContainsKey(CurrentPageTokenKey))
-            {
-                // Resuming, so update the menu to reflect the current page correctly
-                PageTokens currentPageToken;
-                if (Enum.TryParse(_sessionStateService.SessionState[CurrentPageTokenKey].ToString(), out currentPageToken))
-                {
-                    UpdateCanNavigateLookup(currentPageToken);
-                    RaiseCanExecuteChanged();
-                }
-            }
-
-            //     _wifiService.PropertyChanged += _wifiService_PropertyChanged;
+            if (!_sessionStateService.SessionState.ContainsKey(CurrentPageTokenKey)) return;
+            // Resuming, so update the menu to reflect the current page correctly
+            if (!Enum.TryParse(_sessionStateService.SessionState[CurrentPageTokenKey].ToString(),
+                out PageTokens currentPageToken)) return;
+            UpdateCanNavigateLookup(currentPageToken);
+            RaiseCanExecuteChanged();
         }
 
-//        private void _wifiService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-//        {
-//            if (_wifiService.Cmd == "On")
-//                _chartService.IsTimerOn = true;
-//            if (_wifiService.Cmd == "Off")
-//                _chartService.IsTimerOn = false;
-//        }
-
-        private async Task InitAsync()
-        {
-       //    await _signalRService.ConnectionBuilder( _chartService, _lightService);
-            await _speechRecognitionConstraint.SpeechRecognizerStartAsync(_signalRService);
-            if (_speechRecognitionConstraint.speechRecognizer.State == SpeechRecognizerState.Idle)
-            {
-                await _speechRecognitionConstraint.speechRecognizer.ContinuousRecognitionSession.StartAsync();
-            }
-            else
-                Debug.WriteLine("Dupa");
-        }
         private void OnNavigationStateChanged(NavigationStateChangedEventArgs args)
         {
-            PageTokens currentPageToken;
-            if (Enum.TryParse(args.Sender.Content.GetType().Name.Replace("Page", string.Empty), out currentPageToken))
-            {
-                _sessionStateService.SessionState[CurrentPageTokenKey] = currentPageToken.ToString();
-                UpdateCanNavigateLookup(currentPageToken);
-                RaiseCanExecuteChanged();
-            }
+            if (!Enum.TryParse(args.Sender.Content.GetType().Name.Replace("Page", string.Empty),
+                out PageTokens currentPageToken)) return;
+            _sessionStateService.SessionState[CurrentPageTokenKey] = currentPageToken.ToString();
+            UpdateCanNavigateLookup(currentPageToken);
+            RaiseCanExecuteChanged();
         }
 
         private void NavigateToPage(PageTokens pageToken)
         {
-            if (CanNavigateToPage(pageToken))
-            {
-                if (_navigationService.Navigate(pageToken.ToString(), null))
-                {
-                    UpdateCanNavigateLookup(pageToken);
-                    RaiseCanExecuteChanged();
-                }
-            }
+            if (!CanNavigateToPage(pageToken)) return;
+            if (!_navigationService.Navigate(pageToken.ToString(), null)) return;
+            UpdateCanNavigateLookup(pageToken);
+            RaiseCanExecuteChanged();
         }
 
         private bool CanNavigateToPage(PageTokens pageToken)
@@ -126,7 +78,7 @@ namespace SmartHouseSystem.ViewModels
         {
             foreach (var item in MenuItemsList)
             {
-                (item.Command as DelegateCommand).RaiseCanExecuteChanged();
+                (item.Command as DelegateCommand)?.RaiseCanExecuteChanged();
             }
         }
     }

@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace SmartHouseSystem.Model
+﻿namespace SmartHouseSystem.Model
 {
-    public class StatusModel
+    public class TimeStatisticsChartModel
     {
-        public StatusModel(string name, int time)
+        public TimeStatisticsChartModel(string name, int time)
         {
             Name = name;
             Time = time;

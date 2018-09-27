@@ -8,7 +8,7 @@ namespace SmartHouseSystem.Services
 {
     public class LightService : ILightService
     {
-        public ObservableCollection<StatusModel1> StatusModels { get; set; } = new ObservableCollection<StatusModel1>();
+        public ObservableCollection<LightModel> LightModelList { get; set; } = new ObservableCollection<LightModel>();
 
         public LightService()
         {
@@ -17,19 +17,33 @@ namespace SmartHouseSystem.Services
 
         public void InitNotificationOfChange(int lightId)
         {
-            StatusModels.First(light => light.ID == lightId).PropertyChanged += Light_PropertyChanged;
+            LightModelList.First(light => light.ID == lightId).StatusOrIdLightModelPropertyChanged += LightStatusOrIdLightModelStatusOrIdLightModelPropertyChanged;
+            LightModelList.First(light => light.ID == lightId).BulbTimePropertyChanged += LightService_BulbTimePropertyChanged;
         }
 
-        private void Light_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void LightService_BulbTimePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged();
+            OnBulbTimePropertyChanged();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void LightStatusOrIdLightModelStatusOrIdLightModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            OnStatusOfLightPropertyChanged();
         }
+        
+        public event PropertyChangedEventHandler StatusOfLightPropertyChanged;
+
+        protected virtual void OnStatusOfLightPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            StatusOfLightPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler BulbTimePropertyChanged;
+
+        protected virtual void OnBulbTimePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            BulbTimePropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

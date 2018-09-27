@@ -1,10 +1,69 @@
-﻿public class LightModel
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace SmartHouseSystem.Model
 {
-    public string log { get; set; }
-    public int plugin { get; set; }
-    public int pin { get; set; }
-    public string mode { get; set; }
-    public int state { get; set; }
+    public class LightModel 
+    {
+        private bool _lightStatus;
+        private int _ID;
+        private int _bulbOnTimeInMinutesPerDay = 1440;
+        public LightModel(int ID, bool lightStatus)
+        {
+            _lightStatus = lightStatus;
+            _ID = ID;
+            TimeStatisticsChartModelObservableCollection = new ObservableCollection<TimeStatisticsChartModel>()
+            {
+                new TimeStatisticsChartModel("On", BulbOnTimeInMinutesPerDay),
+                new TimeStatisticsChartModel("Off",BulbOffTimeInMinutesPerDay),
+            };
+        }
+        
+        public bool LightStatus
+        { get => _lightStatus;
+            set
+            {
+                _lightStatus = value;
+                OnStatusOrIdLightModelPropertyChanged();
+            }
+        }
+
+        public int ID
+        {
+            get => _ID;
+            set
+            {
+                _ID = value;
+                OnStatusOrIdLightModelPropertyChanged();
+            }
+        }
+
+        public int BulbOnTimeInMinutesPerDay
+        {
+            get => _bulbOnTimeInMinutesPerDay;
+            set
+            {
+                _bulbOnTimeInMinutesPerDay = value;
+                OnBulbTimePropertyChanged();
+            }
+        }
+        public int BulbOffTimeInMinutesPerDay { get; set; } = 0;
+
+        public ObservableCollection<TimeStatisticsChartModel> TimeStatisticsChartModelObservableCollection { get; set; }
+
+        public event PropertyChangedEventHandler StatusOrIdLightModelPropertyChanged;
+
+        protected virtual void OnStatusOrIdLightModelPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            StatusOrIdLightModelPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler BulbTimePropertyChanged;
+
+        protected virtual void OnBulbTimePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            BulbTimePropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }
-
-

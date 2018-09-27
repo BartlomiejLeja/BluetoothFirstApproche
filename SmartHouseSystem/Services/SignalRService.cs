@@ -1,90 +1,98 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using SmartHouseSystem.Model;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Windows.System.Threading;
 
 namespace SmartHouseSystem.Services
 {
     public class SignalRService : ISignalRService
     {
-        private HubConnection connection;
-        private ConnectionState _connectionState1 = ConnectionState.Disconnected;
+        private HubConnection _connection;
+        private ConnectionState _currentConnectionState = ConnectionState.Disconnected;
 
-        public ConnectionState ConnectionState1
+        private bool _lightsListListLoaded = false;
+
+        public bool LightsListLoaded
         {
-            get => _connectionState1;
+            get => _lightsListListLoaded;
             set
             {
-                _connectionState1 = value;
-                OnPropertyChanged();
+                _lightsListListLoaded = value;
+                OnLightsListLoadedPropertyChanged();
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public ConnectionState CurrentConnectionState
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get => _currentConnectionState;
+            set
+            {
+                _currentConnectionState = value;
+                OnCurrentConnectionStatePropertyChanged();
+            }
         }
 
-        public List<StatusModel1> ListOfstatus { get; set; }
+        public event PropertyChangedEventHandler CurrentConnectionStatePropertyChanged;
+
+        protected virtual void OnCurrentConnectionStatePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            CurrentConnectionStatePropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler LightsListLoadedPropertyChanged;
+
+        protected virtual void OnLightsListLoadedPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            LightsListLoadedPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private  ILightService _lightService;
         public async Task ConnectionBuilder(IChartService chartService,ILightService lightService)
         {
             _lightService = lightService;
-             connection = new HubConnectionBuilder()
+
+             _connection = new HubConnectionBuilder()
                 .WithUrl("https://signalirserver20180827052120.azurewebsites.net/message")
                 .WithConsoleLogger(LogLevel.Trace)
                 .Build();
 
-            connection.Closed += (ex) =>
+            _connection.Closed += (ex) =>
             {
                 if (ex == null)
                 {
                     Trace.WriteLine("Connection terminated");
-                    ConnectionState1 = ConnectionState.Disconnected;
+                    CurrentConnectionState = ConnectionState.Disconnected;
                 }
                 else
                 {
                     Trace.WriteLine($"Connection terminated with error: {ex.GetType()}: {ex.Message}");
-                    ConnectionState1 = ConnectionState.Faulted;
+                    CurrentConnectionState = ConnectionState.Faulted;
                 }
             };
-
-            connection.On<bool>("CheckStatusOfLight", async data=>
-            {
-//                Debug.WriteLine("Cheking status in uwp app");
-//                var isOn= await wiFiService.CheckStatusOfLight();
-//                await InvokeSendStatusMethod(isOn);
-                await Task.Delay(3000);
-            });
-
-            connection.On<bool,int>("SendLightStatisticData", (lightStatus, lightNumber )=>
+            
+            _connection.On<bool>("InvokeStatisticsService", (isStatisticsServiceOn) =>
             {
                 Debug.WriteLine("Reciving statistic data from background uwp app");
-                chartService.ChartHandler(lightStatus, lightNumber);
+                chartService.ChartHandler(isStatisticsServiceOn, lightService);
             });
 
-            connection.On<int,bool>("SendLightState", (lightID, lightStatus) =>
+            _connection.On<int,bool>("SendLightState", (lightID, lightStatus) =>
             {
                 //list will be asigne to some avible forr all components list 
-                if (lightService.StatusModels.All(light => light.ID != lightID) || lightService.StatusModels.Count ==0)
+                if (lightService.LightModelList.All(light => light.ID != lightID) || lightService.LightModelList.Count ==0)
                 {
-                    lightService.StatusModels.Add(new StatusModel1(lightID, lightStatus));
+                    lightService.LightModelList.Add(new LightModel(lightID, lightStatus));
                     lightService.InitNotificationOfChange(lightID);
+                    LightsListLoaded = true;
                 }
-                else if (lightService.StatusModels.Any(light=> light.ID==lightID))
+                else if (lightService.LightModelList.Any(light=> light.ID==lightID))
                 {
-                    lightService.StatusModels.First(light => light.ID == lightID).LightStatus = lightStatus;
+                    lightService.LightModelList.First(light => light.ID == lightID).LightStatus = lightStatus;
                 }
             });
             await ConnectAsync();
@@ -92,13 +100,13 @@ namespace SmartHouseSystem.Services
 
         private async Task ConnectAsync()
         {
-            for (int connectCount = 0; connectCount <= 3; connectCount++)
+            for (var connectCount = 0; connectCount <= 3; connectCount++)
             {
                 try
                 {
-                    await connection.StartAsync();
+                    await _connection.StartAsync();
 
-                    ConnectionState1 = ConnectionState.Connected;
+                    CurrentConnectionState = ConnectionState.Connected;
                     break;
                 }
                 catch (Exception ex)
@@ -107,31 +115,23 @@ namespace SmartHouseSystem.Services
 
                     if (connectCount == 3)
                     {
-                        ConnectionState1 = ConnectionState.Faulted;
+                        CurrentConnectionState = ConnectionState.Faulted;
                         throw;
                     }
                 }
-
                 await Task.Delay(1000);
             }
         }
-
-
-        public async Task InvokeSendStaticticData(bool status)
-        {
-            await connection.InvokeAsync("SendLightStatisticData", status);
-        }
         
-        //GOOD
         public async Task InvokeTurnOnLight(bool isOn,int lightNumber)
         {
-            await connection.InvokeAsync("ChangeLightState", isOn, lightNumber);
-            _lightService.StatusModels.First(light => light.ID == lightNumber).LightStatus = isOn;
+            await _connection.InvokeAsync("ChangeLightState", isOn, lightNumber);
+            _lightService.LightModelList.First(light => light.ID == lightNumber).LightStatus = isOn;
         }
 
         public async Task InvokeCheckStatusOfLights(bool x)
         {
-            await connection.InvokeAsync("CheckStatusOfLights", x);
+            await _connection.InvokeAsync("CheckStatusOfLights", x);
         }
         public enum ConnectionState
         {
