@@ -116,6 +116,7 @@
     <Compile Include="Services\SpeechRecognizerService.cs" />
     <Compile Include="SpeechRecognition\AudioCapturePermissions.cs" />
     <Compile Include="StringReciverEventArgs.cs" />
+    <Compile Include="Model\DisplayLightModel.cs" />
     <Compile Include="ViewModels\LightControlerPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />

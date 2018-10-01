@@ -34,10 +34,10 @@ namespace SignalIRServer.Hubs
             return Clients.Others.SendAsync("CheckStatusOfLights", x);
         }
 
-        public Task SendLightState(int lightID, bool lightStatus)
+        public Task SendLightState(int lightID, bool lightStatus, string name)
         {
             Console.WriteLine("SendLightState");
-            return Clients.Others.SendAsync("SendLightState", lightID,lightStatus);
+            return Clients.Others.SendAsync("SendLightState", lightID,lightStatus,name);
         }
         public Task InvokeStatisticsService(bool isStatisticsServiceOn)
         {

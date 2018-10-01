@@ -9,9 +9,11 @@ namespace SmartHouseSystem.Model
         private bool _lightStatus;
         private int _ID;
         private int _bulbOnTimeInMinutesPerDay = 1440;
-        public LightModel(int ID, bool lightStatus)
+        private string _name;
+        public LightModel(int ID, bool lightStatus, string name)
         {
             _lightStatus = lightStatus;
+            _name = name;
             _ID = ID;
             TimeStatisticsChartModelObservableCollection = new ObservableCollection<TimeStatisticsChartModel>()
             {
@@ -28,6 +30,8 @@ namespace SmartHouseSystem.Model
                 OnStatusOrIdLightModelPropertyChanged();
             }
         }
+
+        public string Name { get => _name; set=>_name=value; }
 
         public int ID
         {

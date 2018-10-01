@@ -81,12 +81,12 @@ namespace SmartHouseSystem.Services
                 chartService.ChartHandler(isStatisticsServiceOn, lightService);
             });
 
-            _connection.On<int,bool>("SendLightState", (lightID, lightStatus) =>
+            _connection.On<int,bool,string>("SendLightState", (lightID, lightStatus,name) =>
             {
                 //list will be asigne to some avible forr all components list 
                 if (lightService.LightModelList.All(light => light.ID != lightID) || lightService.LightModelList.Count ==0)
                 {
-                    lightService.LightModelList.Add(new LightModel(lightID, lightStatus));
+                    lightService.LightModelList.Add(new LightModel(lightID, lightStatus,name));
                     lightService.InitNotificationOfChange(lightID);
                     LightsListLoaded = true;
                 }

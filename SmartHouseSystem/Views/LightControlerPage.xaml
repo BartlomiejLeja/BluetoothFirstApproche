@@ -6,44 +6,39 @@
     prism:ViewModelLocator.AutoWireViewModel="True" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:SmartHouseSystem.ViewModels"
+    xmlns:model="using:SmartHouseSystem.Model"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition  />
-            <ColumnDefinition  />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition  />
-            <RowDefinition  />
-        </Grid.RowDefinitions>
-
-        <StackPanel x:Name="LayoutRoot" Margin="10">
-            <!--<StackPanel.Background>
-                <ImageBrush ImageSource="ms-appx:///Images/room.bmp" />
-            </StackPanel.Background>-->
-            <!--<Image Height="100" Source="{Binding UriSource}"/>-->
-            <!--<Button x:Name="turnOnLight" Content="Click to turn on the light"
-            Margin="5" Width="470"
-             HorizontalAlignment="Left"
-            Foreground="Green"
-            Command="{Binding LightOnCommand }" />-->
-            <Button x:Name="LightSwitch00" Background="White"  Margin="5" Width="120" Height="110" CommandParameter="124" Command="{Binding ChangeLightState }"  HorizontalAlignment="Center" >
-                <StackPanel>
-                    <Image Height="100" Source="{Binding UriSource}"/>
-                </StackPanel>
-            </Button>
-            <Button x:Name="LightSwitch01" Background="White"  Margin="5" Width="120" Height="110" CommandParameter="125" Command="{Binding ChangeLightState }"  HorizontalAlignment="Center" >
-                <StackPanel>
-                    <Image Height="100" Source="{Binding UriSource1}"/>
-                </StackPanel>
-            </Button>
-            <!--<Button x:Name="turnOffLight" Content="Click to turn of the light"
-             Margin="5" Width="470"
-             HorizontalAlignment="Left"
-             Foreground="Green"
-            Command="{Binding LightOfCommand }"/>
-            <TextBlock  Text="{Binding UriSource}"/>-->
-        </StackPanel>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="20">
+        <GridView ItemsSource="{Binding DisplayLightModels}" IsItemClickEnabled="True">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="model:DisplayLightModel">
+                    <Grid Padding="30">
+                        <Button x:Name="LightSwitch" Background="White" Margin="5" CommandParameter="{x:Bind Path=LightBulbNumber}" Command="{x:Bind Path=Command}"  HorizontalAlignment="Center" Visibility="Visible" FocusVisualPrimaryBrush="White" FocusVisualSecondaryBrush="White" Foreground="White" BorderBrush="White" >
+                            <Button.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Dark">
+                                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="White"/>
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="Light">
+                                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="White"/>
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </Button.Resources>
+                            <StackPanel HorizontalAlignment="Center" >
+                                <Image Width="100" Source="{Binding LightStatus}"/>
+                                <TextBlock FontSize="16" Text="{Binding Name}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
     </Grid>
 </prism:SessionStateAwarePage>
+

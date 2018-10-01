@@ -2,9 +2,11 @@
 using Prism.Windows.Mvvm;
 using SmartHouseSystem.Services;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Core;
+using SmartHouseSystem.Model;
 
 namespace SmartHouseSystem.ViewModels
 {
@@ -12,41 +14,32 @@ namespace SmartHouseSystem.ViewModels
     {
         private readonly ILightService _lightService;
 
-        private static readonly string lightOn = "ms-appx:///Images/lightTurnOn.png";
-        private static  string lightOff = "ms-appx:///Images/lightTurnOff.jpg";
-
-        public DelegateCommand<string> ChangeLightState { get; private set; }
-     
-        private string _uriSource;
-        private string _uriSource1;
-   
-        public string UriSource
-        {
-            get => _uriSource;
-            set => SetProperty(ref _uriSource, value);
-        }
+        private static string _lightOn = "ms-appx:///Images/lightTurnOn.png";
+        private static string _lightOff = "ms-appx:///Images/lightTurnOff.jpg";
         
-        public string UriSource1
-        {
-            get => _uriSource1;
-            set => SetProperty(ref _uriSource1, value);
-        }
-
+        public ObservableCollection<DisplayLightModel> DisplayLightModels { get; set; }
+        
         public LightControlerPageViewModel( ISignalRService signalRService, ILightService lightService)
         {
             _lightService = lightService;
-     
-            foreach (var light in lightService.LightModelList)
-            {
-                UriSourceChanger(light.LightStatus,light.ID);
-            }
+            DisplayLightModels = new ObservableCollection<DisplayLightModel>();
 
-            ChangeLightState = new DelegateCommand<string>(async (args) =>
+            foreach (var bulb in lightService.LightModelList)
             {
-                lightService.LightModelList.First(light => light.ID == Int32.Parse(args)).LightStatus = !lightService.LightModelList.First(light => light.ID == Int32.Parse(args)).LightStatus;
-                await signalRService.InvokeTurnOnLight(lightService.LightModelList.First(light => light.ID == Int32.Parse(args)).LightStatus, Int32.Parse(args));
-            });
-            
+                DisplayLightModels.Add(
+                    new DisplayLightModel()
+                    {
+                        Name = bulb.Name,
+                        LightStatus = UriChanger(bulb.LightStatus),
+                        LightBulbNumber = bulb.ID.ToString(),
+                        Command = new DelegateCommand<string>(async (args) =>
+                        {
+                            bulb.LightStatus =!bulb.LightStatus;
+                            await signalRService.InvokeTurnOnLight(
+                                bulb.LightStatus,int.Parse(args));
+                        })
+                    });
+            }
             lightService.StatusOfLightPropertyChanged += LightService_PropertyChanged;
         }
 
@@ -57,22 +50,14 @@ namespace SmartHouseSystem.ViewModels
                 {
                     foreach (var statsuModel in _lightService.LightModelList)
                     {
-                        UriSourceChanger(statsuModel.LightStatus, statsuModel.ID);
+                        DisplayLightModels.First(l=>l.LightBulbNumber==(statsuModel.ID).ToString()).LightStatus= UriChanger(statsuModel.LightStatus);
                     }
                 });
         }
        
-        private void UriSourceChanger(bool lightState, int lightID)
+        private string UriChanger(bool lightState)
         {
-            switch (lightID)
-            {
-                case 124:
-                    UriSource= lightState ? lightOn : lightOff;
-                    break;
-                case 125:
-                    UriSource1 = lightState ? lightOn : lightOff;
-                    break;
-            }
+             return  lightState ? _lightOn : _lightOff;
         }
     }
 }
