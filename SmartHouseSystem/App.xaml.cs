@@ -66,6 +66,7 @@ namespace SmartHouseSystem
             Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal,
                 () => { var t = NavigationService.Navigate("Main", null); });
+           _chartService.ChartHandler(true, _lightService);
         }
 
         protected override UIElement CreateShell(Frame rootFrame)

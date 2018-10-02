@@ -9,6 +9,7 @@ namespace SmartHouseSystem.Services
         ObservableCollection<LightModel> LightModelList { get; set; }
      
         void InitNotificationOfChange(int lightId);
+        void InitNotificationOfBulbChange(LightModel lightModel);
 
         event PropertyChangedEventHandler StatusOfLightPropertyChanged;
         event PropertyChangedEventHandler BulbTimePropertyChanged;

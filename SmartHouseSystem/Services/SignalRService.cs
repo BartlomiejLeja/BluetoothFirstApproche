@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using SmartHouseSystem.Model;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace SmartHouseSystem.Services
 {
@@ -57,7 +60,7 @@ namespace SmartHouseSystem.Services
             _lightService = lightService;
 
              _connection = new HubConnectionBuilder()
-                .WithUrl("https://signalirserver20180827052120.azurewebsites.net/message")
+                .WithUrl("https://signalirserver20180827052120.azurewebsites.net/LightApp")
                 .WithConsoleLogger(LogLevel.Trace)
                 .Build();
 
@@ -78,24 +81,29 @@ namespace SmartHouseSystem.Services
             _connection.On<bool>("InvokeStatisticsService", (isStatisticsServiceOn) =>
             {
                 Debug.WriteLine("Reciving statistic data from background uwp app");
-                chartService.ChartHandler(isStatisticsServiceOn, lightService);
+             //  chartService.ChartHandler(isStatisticsServiceOn, lightService);
             });
 
             _connection.On<int,bool,string>("SendLightState", (lightID, lightStatus,name) =>
             {
-                //list will be asigne to some avible forr all components list 
-                if (lightService.LightModelList.All(light => light.ID != lightID) || lightService.LightModelList.Count ==0)
-                {
-                    lightService.LightModelList.Add(new LightModel(lightID, lightStatus,name));
-                    lightService.InitNotificationOfChange(lightID);
-                    LightsListLoaded = true;
-                }
-                else if (lightService.LightModelList.Any(light=> light.ID==lightID))
+                if (lightService.LightModelList.Any(light=> light.ID==lightID))
                 {
                     lightService.LightModelList.First(light => light.ID == lightID).LightStatus = lightStatus;
                 }
             });
-            await ConnectAsync();
+
+            _connection.On<string>("SendInitialLightCollection", lightsCollection =>
+            {
+                Debug.WriteLine(lightsCollection);
+                lightService.LightModelList = new ObservableCollection<LightModel> (JsonConvert.DeserializeObject<List<LightModel>>(lightsCollection));
+                foreach (var bulb in lightService.LightModelList)
+                {
+                    lightService.InitNotificationOfBulbChange(bulb);
+                }
+                LightsListLoaded = true;
+            });
+           
+           await ConnectAsync();
         }
 
         private async Task ConnectAsync()

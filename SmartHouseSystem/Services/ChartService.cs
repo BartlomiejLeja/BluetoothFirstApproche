@@ -15,35 +15,34 @@ namespace SmartHouseSystem.Services
         
         public void ChartHandler(bool isStatisticsServiceOn, ILightService lightService)
         {
-            var delay = TimeSpan.FromSeconds(30);
-            var periodicTimer = ThreadPoolTimer.CreatePeriodicTimer(
-                (source) =>
-                {
-                        if (_firstDate.Day == DateTime.Now.Day)
-                        {
-                            foreach(var light in lightService.LightModelList)
+                var delay = TimeSpan.FromSeconds(30);
+
+                var periodicTimer = ThreadPoolTimer.CreatePeriodicTimer(
+                    (source) =>
+                    {
+                            if (_firstDate.Day == DateTime.Now.Day)
                             {
-                                if (light.LightStatus)
+                                foreach (var light in lightService.LightModelList)
                                 {
-                                    light.BulbOnTimeInMinutesPerDay--;
-                                    light.BulbOffTimeInMinutesPerDay++;
-                                    Debug.WriteLine($"Value of bulbOffTimeInMinutes changed, new value {light.BulbOffTimeInMinutesPerDay} " +
-                                                    $"and bulbOffTimeInMinutes changed, new value {light.BulbOnTimeInMinutesPerDay} date: {DateTime.Now}");
+                                    if (light.LightStatus)
+                                    {
+                                        light.BulbOnTimeInMinutesPerDay--;
+                                        light.BulbOffTimeInMinutesPerDay++;
+                                        Debug.WriteLine($"Value of bulbOffTimeInMinutes changed, new value {light.BulbOffTimeInMinutesPerDay} " +
+                                                        $"and bulbOffTimeInMinutes changed, new value {light.BulbOnTimeInMinutesPerDay} date: {DateTime.Now}");
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            foreach (var light in lightService.LightModelList)
+                            else
                             {
-                                light.BulbOnTimeInMinutesPerDay = 1439;
-                                light.BulbOffTimeInMinutesPerDay= 1;
+                                foreach (var light in lightService.LightModelList)
+                                {
+                                    light.BulbOnTimeInMinutesPerDay = 1439;
+                                    light.BulbOffTimeInMinutesPerDay = 1;
+                                }
+                                _firstDate = DateTime.Now;
                             }
-                            _firstDate = DateTime.Now;
-                        } 
-                }, delay);
-           if (isStatisticsServiceOn == false)
-           { periodicTimer.Cancel(); };
-        }
+                    }, delay);
+            } 
     }
 }

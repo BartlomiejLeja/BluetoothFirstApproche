@@ -21,6 +21,12 @@ namespace SmartHouseSystem.Services
             LightModelList.First(light => light.ID == lightId).BulbTimePropertyChanged += LightService_BulbTimePropertyChanged;
         }
 
+        public void InitNotificationOfBulbChange(LightModel lightModel)
+        {
+            lightModel.StatusOrIdLightModelPropertyChanged += LightStatusOrIdLightModelStatusOrIdLightModelPropertyChanged;
+            lightModel.BulbTimePropertyChanged += LightService_BulbTimePropertyChanged;
+        }
+
         private void LightService_BulbTimePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnBulbTimePropertyChanged();
