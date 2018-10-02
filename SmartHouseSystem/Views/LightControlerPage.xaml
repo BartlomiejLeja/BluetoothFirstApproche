@@ -11,7 +11,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="20">
-        <GridView ItemsSource="{Binding DisplayLightModels}" IsItemClickEnabled="True">
+        <GridView ItemsSource="{Binding DisplayLightModels}" IsItemClickEnabled="False">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="model:DisplayLightModel">
                     <Grid Padding="30">

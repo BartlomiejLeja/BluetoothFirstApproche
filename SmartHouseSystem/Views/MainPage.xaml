@@ -6,104 +6,172 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
+    xmlns:model="using:SmartHouseSystem.Model"
     prism:ViewModelLocator.AutoWireViewModel="True" 
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition  />
-            <ColumnDefinition  />
-        </Grid.ColumnDefinitions>
-        <Charting:Chart  
-                     Grid.Column="0"
-                     x:Name="PieChart"  
-                     HorizontalAlignment="Left"  
-                     VerticalAlignment="Top"  
-                     Margin="0" Width="400"  Height="400">
-            <Charting:PieSeries Margin="0" 
-                         ItemsSource="{Binding StatusList }"        
-                         IndependentValuePath="Name"  
-                         DependentValuePath="Time"  
-                         IsSelectionEnabled="True"/>
-            <Charting:Chart.Palette>
-                <Charting:ResourceDictionaryCollection>
-                    <!-- Blue -->
-                    <ResourceDictionary>
-                        <SolidColorBrush
-                                    x:Key="Background"
-                                    Color="#FF4586D8" />
-                        <Style
-                                    x:Key="DataPointStyle"
-                                    TargetType="Control">
-                            <Setter
-                                    Property="Background"
-                                    Value="{StaticResource Background}" />
-                        </Style>
-                        <Style
-                                    x:Key="DataShapeStyle"
-                                    TargetType="Shape">
-                            <Setter
-                                    Property="Stroke"
-                                    Value="{StaticResource Background}" />
-                            <Setter
-                                    Property="StrokeThickness"
-                                    Value="2" />
-                            <Setter
-                                    Property="StrokeMiterLimit"
-                                    Value="1" />
-                            <Setter
-                                    Property="Fill"
-                                    Value="{StaticResource Background}" />
-                        </Style>
-                    </ResourceDictionary>
-                    <!-- Red -->
-                    <ResourceDictionary>
-                        <SolidColorBrush
-                                     x:Key="Background"
-                                     Color="#FFDC443F" />
-                        <Style
-                                    x:Key="DataPointStyle"
-                                    TargetType="Control">
-                            <Setter
-                                    Property="Background"
-                                    Value="{StaticResource Background}" />
-                        </Style>
-                        <Style
-                                     x:Key="DataShapeStyle"
-                                    TargetType="Shape">
-                            <Setter
-                                    Property="Stroke"
-                                    Value="{StaticResource Background}" />
-                            <Setter
-                                     Property="StrokeThickness"
-                                     Value="2" />
-                            <Setter
-                                    Property="StrokeMiterLimit"
-                                    Value="1" />
-                            <Setter
-                                    Property="Fill"
-                                    Value="{StaticResource Background}" />
-                        </Style>
-                    </ResourceDictionary>
-                </Charting:ResourceDictionaryCollection>
-            </Charting:Chart.Palette>
-        </Charting:Chart>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="20">
+        <GridView ItemsSource="{Binding ListOfChartData}" IsItemClickEnabled="False">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="model:TimeStatisticsCollectionChartModel" >
+                    <Grid Padding="30">
+                        <Charting:Chart   
+                                         Grid.Column="0"
+                                         x:Name="PieChart"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Top"
+                                         Margin="0" Width="400"  Height="400">
+                                <Charting:PieSeries Margin="0"
+                                             ItemsSource="{Binding TimeStatisticsChartModel}"
+                                             IndependentValuePath="Name"
+                                             DependentValuePath="Time"
+                                             IsSelectionEnabled="True"/>
+                                <Charting:Chart.Palette>
+                                    <Charting:ResourceDictionaryCollection>
+                                        <!-- Blue -->
+                                        <ResourceDictionary>
+                                            <SolidColorBrush
+                                                        x:Key="Background"
+                                                        Color="#FF4586D8" />
+                                            <Style
+                                                        x:Key="DataPointStyle"
+                                                        TargetType="Control">
+                                                <Setter
+                                                        Property="Background"
+                                                        Value="{StaticResource Background}" />
+                                            </Style>
+                                            <Style
+                                                        x:Key="DataShapeStyle"
+                                                        TargetType="Shape">
+                                                <Setter
+                                                        Property="Stroke"
+                                                        Value="{StaticResource Background}" />
+                                                <Setter
+                                                        Property="StrokeThickness"
+                                                        Value="2" />
+                                                <Setter
+                                                        Property="StrokeMiterLimit"
+                                                        Value="1" />
+                                                <Setter
+                                                        Property="Fill"
+                                                        Value="{StaticResource Background}" />
+                                            </Style>
+                                        </ResourceDictionary>
+                                        <!-- Red -->
+                                        <ResourceDictionary>
+                                            <SolidColorBrush
+                                                         x:Key="Background"
+                                                         Color="#FFDC443F" />
+                                            <Style
+                                                        x:Key="DataPointStyle"
+                                                        TargetType="Control">
+                                                <Setter
+                                                        Property="Background"
+                                                        Value="{StaticResource Background}" />
+                                            </Style>
+                                            <Style
+                                                         x:Key="DataShapeStyle"
+                                                        TargetType="Shape">
+                                                <Setter
+                                                        Property="Stroke"
+                                                        Value="{StaticResource Background}" />
+                                                <Setter
+                                                         Property="StrokeThickness"
+                                                         Value="2" />
+                                                <Setter
+                                                        Property="StrokeMiterLimit"
+                                                        Value="1" />
+                                                <Setter
+                                                        Property="Fill"
+                                                        Value="{StaticResource Background}" />
+                                            </Style>
+                                        </ResourceDictionary>
+                                    </Charting:ResourceDictionaryCollection>
+                                </Charting:Chart.Palette>
+                            </Charting:Chart>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
 
-        <Charting:Chart  
-                    Grid.Column="1"
-                    x:Name="ColumnChart"  
-                    HorizontalAlignment="Left"  
-                    VerticalAlignment="Top"  
-                    Margin="0" Width="400"  Height="400" >
-            <Charting:ColumnSeries  
-                     ItemsSource="{Binding PowerUsageList }" 
-                     IndependentValuePath="Day"  
-                     DependentValuePath="KilowattHour" CharacterSpacing="5"  
-                     IsSelectionEnabled="True"/>
-        </Charting:Chart>
+        <!-- <Grid.ColumnDefinitions> -->
+        <!--     <ColumnDefinition  /> -->
+        <!--     <ColumnDefinition  /> -->
+        <!-- </Grid.ColumnDefinitions> -->
+        <!-- <Charting:Chart   -->
+        <!--              Grid.Column="0" -->
+        <!--              x:Name="PieChart"   -->
+        <!--              HorizontalAlignment="Left"   -->
+        <!--              VerticalAlignment="Top"   -->
+        <!--              Margin="0" Width="400"  Height="400"> -->
+        <!--     <Charting:PieSeries Margin="0"  -->
+        <!--                  ItemsSource="{Binding StatusList }"         -->
+        <!--                  IndependentValuePath="Name"   -->
+        <!--                  DependentValuePath="Time"   -->
+        <!--                  IsSelectionEnabled="True"/> -->
+        <!--     <Charting:Chart.Palette> -->
+        <!--         <Charting:ResourceDictionaryCollection> -->
+        <!--             ~1~ Blue @1@ -->
+        <!--             <ResourceDictionary> -->
+        <!--                 <SolidColorBrush -->
+        <!--                             x:Key="Background" -->
+        <!--                             Color="#FF4586D8" /> -->
+        <!--                 <Style -->
+        <!--                             x:Key="DataPointStyle" -->
+        <!--                             TargetType="Control"> -->
+        <!--                     <Setter -->
+        <!--                             Property="Background" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                 </Style> -->
+        <!--                 <Style -->
+        <!--                             x:Key="DataShapeStyle" -->
+        <!--                             TargetType="Shape"> -->
+        <!--                     <Setter -->
+        <!--                             Property="Stroke" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                     <Setter -->
+        <!--                             Property="StrokeThickness" -->
+        <!--                             Value="2" /> -->
+        <!--                     <Setter -->
+        <!--                             Property="StrokeMiterLimit" -->
+        <!--                             Value="1" /> -->
+        <!--                     <Setter -->
+        <!--                             Property="Fill" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                 </Style> -->
+        <!--             </ResourceDictionary> -->
+        <!--             ~1~ Red @1@ -->
+        <!--             <ResourceDictionary> -->
+        <!--                 <SolidColorBrush -->
+        <!--                              x:Key="Background" -->
+        <!--                              Color="#FFDC443F" /> -->
+        <!--                 <Style -->
+        <!--                             x:Key="DataPointStyle" -->
+        <!--                             TargetType="Control"> -->
+        <!--                     <Setter -->
+        <!--                             Property="Background" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                 </Style> -->
+        <!--                 <Style -->
+        <!--                              x:Key="DataShapeStyle" -->
+        <!--                             TargetType="Shape"> -->
+        <!--                     <Setter -->
+        <!--                             Property="Stroke" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                     <Setter -->
+        <!--                              Property="StrokeThickness" -->
+        <!--                              Value="2" /> -->
+        <!--                     <Setter -->
+        <!--                             Property="StrokeMiterLimit" -->
+        <!--                             Value="1" /> -->
+        <!--                     <Setter -->
+        <!--                             Property="Fill" -->
+        <!--                             Value="{StaticResource Background}" /> -->
+        <!--                 </Style> -->
+        <!--             </ResourceDictionary> -->
+        <!--         </Charting:ResourceDictionaryCollection> -->
+        <!--     </Charting:Chart.Palette> -->
+        <!-- </Charting:Chart> -->
 
-        <Button  Width="50" Height="50" Command="{Binding SpeechTest}"/>
-        
     </Grid>
-
 </prism:SessionStateAwarePage>

@@ -1,5 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Windows.Mvvm;
+﻿using Prism.Windows.Mvvm;
 using SmartHouseSystem.Model;
 using SmartHouseSystem.Services;
 using System;
@@ -11,53 +10,41 @@ namespace SmartHouseSystem.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private readonly IChartService chartService;
-        private readonly ILightService lightService;
-        private  double powerOfLightBulbInKiloWats = 0.01;
-        private  double usageOffPower;
-     
-        public DelegateCommand SpeechTest { get; private set; }
-        
-        public ObservableCollection<TimeStatisticsChartModel> statusList;
-        public ObservableCollection<PowerUsageModel> powerUsageList;
+        private readonly ILightService _lightService;
+        private ObservableCollection<TimeStatisticsCollectionChartModel> _listOfChartData;
 
-        public ObservableCollection<TimeStatisticsChartModel> StatusList
+        public ObservableCollection<TimeStatisticsCollectionChartModel> ListOfChartData
         {
-            get { return statusList; }
-
-            set { SetProperty(ref statusList, value); }
+            get => _listOfChartData;
+            set => SetProperty(ref _listOfChartData, value);
         }
 
-        public ObservableCollection<PowerUsageModel> PowerUsageList
+        public MainPageViewModel( ILightService lightService)
         {
-            get { return powerUsageList; }
-
-            set { SetProperty(ref powerUsageList, value); }
-        }
-
-        public MainPageViewModel(IChartService chartService, ILightService lightService)
-        {
-            this.chartService = chartService;
-            this.lightService = lightService;
-         
-//            usageOffPower = (this.chartService.BulbOnTimeInMinutes / 60) * powerOfLightBulbInKiloWats;
-//            PowerUsageList = new ObservableCollection<PowerUsageModel>
-//            {
-//                new PowerUsageModel(usageOffPower,"Wtorek")
-//            };
+            _lightService = lightService;
+           
             SetStatusListData();
-            SpeechTest = new DelegateCommand(async () => { StatusList = lightService.LightModelList[0].TimeStatisticsChartModelObservableCollection; });
+       
             lightService.BulbTimePropertyChanged += _bulbTime_PropertyChangedAsync;
         }
 
         private void SetStatusListData()
         {
-            StatusList = new ObservableCollection<TimeStatisticsChartModel>
+            ListOfChartData = new ObservableCollection<TimeStatisticsCollectionChartModel>();
+            foreach (var lightBulb in _lightService.LightModelList)
             {
-                //Create list of Status list check if
-                new TimeStatisticsChartModel("On", lightService.LightModelList[0].BulbOnTimeInMinutesPerDay),
-                new TimeStatisticsChartModel("Off", lightService.LightModelList[0].BulbOffTimeInMinutesPerDay)
-            };
+                var bulbOnStatisticsChartModel = new TimeStatisticsChartModel(StatusTypeConverter(lightBulb.LightStatus),
+                    lightBulb.BulbOnTimeInMinutesPerDay);
+                var bulbOfStatisticsChartModel = new TimeStatisticsChartModel(StatusTypeConverter(lightBulb.LightStatus),
+                    lightBulb.BulbOffTimeInMinutesPerDay);
+
+                ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel));
+            }
+        }
+
+        private string StatusTypeConverter(bool status)
+        {
+            return status ? "On" : "Off";
         }
 
         private async void _bulbTime_PropertyChangedAsync(object sender, PropertyChangedEventArgs e)
