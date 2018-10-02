@@ -38,7 +38,7 @@ namespace SmartHouseSystem.ViewModels
                 var bulbOfStatisticsChartModel = new TimeStatisticsChartModel(StatusTypeConverter(lightBulb.LightStatus),
                     lightBulb.BulbOffTimeInMinutesPerDay);
 
-                ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel));
+                ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel,lightBulb.Name));
             }
         }
 

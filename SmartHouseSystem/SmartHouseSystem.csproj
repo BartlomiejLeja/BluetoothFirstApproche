@@ -101,7 +101,6 @@
     <Compile Include="ExtendedSplashScreen.xaml.cs">
       <DependentUpon>ExtendedSplashScreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\PowerUsageModel.cs" />
     <Compile Include="Model\TimeStatisticsChartModel.cs" />
     <Compile Include="Model\LightModel.cs" />
     <Compile Include="Model\TimeStatisticsCollectionChartModel.cs" />
@@ -139,22 +138,21 @@
     <None Include="SmartHouseSystem_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\logo.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-400.png" />
-    <Content Include="Images\room.bmp" />
-    <Content Include="Images\lightTurnOff.jpg" />
-    <Content Include="Images\lightTurnOn.png" />
-    <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Images\lightTurnOff.jpg" />
+    <Content Include="Images\lightTurnOn.png" />
+    <Content Include="Properties\Default.rd.xml" />
     <Content Include="SRGS\grammar.xml">
       <SubType>Designer</SubType>
     </Content>

@@ -33,6 +33,6 @@
                       Margin="0,48,0,0"
                       IsTabStop="False"
                       ItemTemplate="{StaticResource MenuItemTemplate}"
-                      ItemsSource="{Binding MenuItemsList}" />
+                      ItemsSource="{Binding MenuItemsList}"/>
     </Grid>
 </UserControl>

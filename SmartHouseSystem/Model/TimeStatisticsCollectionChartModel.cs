@@ -5,7 +5,8 @@ namespace SmartHouseSystem.Model
 {
     public class TimeStatisticsCollectionChartModel : ViewModelBase
     {
-        private ObservableCollection<TimeStatisticsChartModel> _timeStatisticsChartModel;
+       private ObservableCollection<TimeStatisticsChartModel> _timeStatisticsChartModel;
+        public string Name { get; set; }
        public ObservableCollection<TimeStatisticsChartModel> TimeStatisticsChartModel
        {
            get => _timeStatisticsChartModel;
@@ -14,8 +15,9 @@ namespace SmartHouseSystem.Model
         }
 
         public TimeStatisticsCollectionChartModel(TimeStatisticsChartModel bulbOnStatisticsChartModel, 
-            TimeStatisticsChartModel bulbOffStatisticsChartModel)
+            TimeStatisticsChartModel bulbOffStatisticsChartModel, string name)
         {
+            Name = name;
             TimeStatisticsChartModel = new ObservableCollection<TimeStatisticsChartModel>
             {
                 bulbOnStatisticsChartModel,bulbOffStatisticsChartModel
