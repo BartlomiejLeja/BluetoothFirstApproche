@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <UserSecretsId>fc884916-ea35-49d5-8331-24efefdfe6bb</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Services\ChartService.cs~RF1b68625.TMP" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />

@@ -1,17 +1,27 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using SignalIRServer.Model;
+using Newtonsoft.Json;
+using SignalIRServer.Services;
 
 namespace SignalIRServer.Hubs
 {
     public class Broadcaster : Hub
     {
-        //public override  Task OnConnectedAsync()
-        //{
-        //    return Clients.Client(Context.ConnectionId).InvokeAsync("Send", message);
-        //}
+        private ILightsService _lightsService;
+
+        public Broadcaster(ILightsService lightsService)
+        {
+            _lightsService = lightsService;
+        }
+
+        public override Task OnConnectedAsync()
+        {
+            var lightsCollection = _lightsService.GetListOfLightBullbs();
+            var jsonConvertetLightsCollection = JsonConvert.SerializeObject(lightsCollection);
+            return Clients.Client(Context.ConnectionId).SendAsync("SendInitialLightCollection", jsonConvertetLightsCollection);
+        }
+
         public Task Subscribe(string clientName)
         {
             return Groups.AddAsync(Context.ConnectionId, clientName);
@@ -25,6 +35,7 @@ namespace SignalIRServer.Hubs
         public Task ChangeLightState(bool isLightOn, int lightNumber)
         {
             Console.WriteLine("TrigerLightSevice");
+            _lightsService.SetNewBulbStatus(lightNumber, isLightOn);
             return Clients.All.SendAsync("ChangeLightState", isLightOn, lightNumber);
         }
         
@@ -37,6 +48,7 @@ namespace SignalIRServer.Hubs
         public Task SendLightState(int lightID, bool lightStatus)
         {
             Console.WriteLine("SendLightState");
+            _lightsService.SetNewBulbStatus(lightID, lightStatus);
             return Clients.Others.SendAsync("SendLightState", lightID,lightStatus);
         }
         public Task InvokeStatisticsService(bool isStatisticsServiceOn)

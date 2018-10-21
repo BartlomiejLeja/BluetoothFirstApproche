@@ -60,7 +60,8 @@ namespace SmartHouseSystem.Services
             _lightService = lightService;
 
              _connection = new HubConnectionBuilder()
-                .WithUrl("https://signalirserver20180827052120.azurewebsites.net/LightApp")
+//                .WithUrl("https://signalirserver20181021093049.azurewebsites.net/LightApp")
+                 .WithUrl("http://localhost:51690/LightApp")
                 .WithConsoleLogger(LogLevel.Trace)
                 .Build();
 
@@ -84,7 +85,7 @@ namespace SmartHouseSystem.Services
              //  chartService.ChartHandler(isStatisticsServiceOn, lightService);
             });
 
-            _connection.On<int,bool,string>("SendLightState", (lightID, lightStatus,name) =>
+            _connection.On<int,bool>("SendLightState", (lightID, lightStatus) =>
             {
                 if (lightService.LightModelList.Any(light=> light.ID==lightID))
                 {

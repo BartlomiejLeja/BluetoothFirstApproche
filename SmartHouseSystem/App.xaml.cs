@@ -39,6 +39,7 @@ namespace SmartHouseSystem
             InitializeComponent();
           
             _signalRService.ConnectionBuilder(_chartService, _lightService);
+            //TODO This is propobly to remove after implementing onconnection method in azure server app
             _signalRService.CurrentConnectionStatePropertyChanged += _signalRService_PropertyChanged;
             _signalRService.LightsListLoadedPropertyChanged += _signalRService_LightsLoadedChange;
             ExtendedSplashScreenFactory = (splashscreen) => _extendedSplashScreen=new ExtendedSplashScreen(splashscreen);
@@ -56,9 +57,10 @@ namespace SmartHouseSystem
                 Debug.WriteLine("Speech recognizer not ready");
         }
 
+        //TODO This is propobly to remove after implementing onconnection method in azure server app
         private void _signalRService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-              _signalRService.InvokeCheckStatusOfLights(true);
+           //   _signalRService.InvokeCheckStatusOfLights(true);
         }
 
         private void _signalRService_LightsLoadedChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SignalIRServer.Hubs;
+using SignalIRServer.Services;
 
 namespace SignalIRServer
 {
@@ -24,6 +25,8 @@ namespace SignalIRServer
                                     .AllowAnyMethod());
             });
             services.AddSignalR();
+           // services.Add(new ServiceDescriptor(typeof(ILightsService), typeof(LightsService), ServiceLifetime.Singleton));
+            services.AddSingleton<ILightsService, LightsService>();
             services.AddMvc();
         }
 

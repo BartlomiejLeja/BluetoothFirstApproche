@@ -12,5 +12,7 @@
         public bool LightStatus { get; set; }
         public int ID { get; set; }
         public string Name { get; set; }
+        public int BulbOnTimeInMinutesPerDay { get; set; } = 1440;
+        public int BulbOffTimeInMinutesPerDay { get; set; } = 0;
     }
 }
