@@ -17,7 +17,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-preview1-final" />
-    <PackageReference Include="System.Reactive" Version="4.1.0-preview.84" /> 
+    <PackageReference Include="System.Reactive" Version="4.1.0-preview.84" />
+    <PackageReference Include="System.Threading.Timer" Version="4.3.0" /> 
   </ItemGroup>
 
 </Project>

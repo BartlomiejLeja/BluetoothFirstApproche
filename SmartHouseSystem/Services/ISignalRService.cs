@@ -7,8 +7,7 @@ namespace SmartHouseSystem.Services
     {
       Task ConnectionBuilder( IChartService chartService, ILightService lightService);
       Task InvokeTurnOnLight(bool isOn, int lightNumber);
-      Task InvokeCheckStatusOfLights(bool x);
-
+    
       event PropertyChangedEventHandler CurrentConnectionStatePropertyChanged;
       event PropertyChangedEventHandler LightsListLoadedPropertyChanged;
     }

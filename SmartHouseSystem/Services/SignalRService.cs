@@ -60,8 +60,8 @@ namespace SmartHouseSystem.Services
             _lightService = lightService;
 
              _connection = new HubConnectionBuilder()
-//                .WithUrl("https://signalirserver20181021093049.azurewebsites.net/LightApp")
-                 .WithUrl("http://localhost:51690/LightApp")
+               .WithUrl("https://signalirserver20181021093049.azurewebsites.net/LightApp")
+               //  .WithUrl("http://localhost:51690/LightApp")
                 .WithConsoleLogger(LogLevel.Trace)
                 .Build();
 
@@ -85,11 +85,17 @@ namespace SmartHouseSystem.Services
              //  chartService.ChartHandler(isStatisticsServiceOn, lightService);
             });
 
-            _connection.On<int,bool>("SendLightState", (lightID, lightStatus) =>
+            _connection.On<int,bool,DateTime, string>("SendLightState", (lightID, lightStatus,dateTime, serializedLightBulbModel) =>
             {
+               var LightBulbModel = JsonConvert.DeserializeObject<LightModel>(serializedLightBulbModel);
                 if (lightService.LightModelList.Any(light=> light.ID==lightID))
                 {
                     lightService.LightModelList.First(light => light.ID == lightID).LightStatus = lightStatus;
+                    if (lightStatus == true)
+                    {
+                        lightService.LightModelList.First(light => light.ID == lightID).TimeOn = dateTime;
+                    }else if(lightStatus == false)
+                        lightService.LightModelList.First(light => light.ID == lightID).TimeOff = dateTime;
                 }
             });
 
@@ -137,11 +143,7 @@ namespace SmartHouseSystem.Services
             await _connection.InvokeAsync("ChangeLightState", isOn, lightNumber);
             _lightService.LightModelList.First(light => light.ID == lightNumber).LightStatus = isOn;
         }
-
-        public async Task InvokeCheckStatusOfLights(bool x)
-        {
-            await _connection.InvokeAsync("CheckStatusOfLights", x);
-        }
+        
         public enum ConnectionState
         {
             Connected,

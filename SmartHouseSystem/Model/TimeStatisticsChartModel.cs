@@ -4,8 +4,8 @@ namespace SmartHouseSystem.Model
 {
     public class TimeStatisticsChartModel : ViewModelBase
     {
-        private int _time;
-        public TimeStatisticsChartModel(string name, int time)
+        private double _time;
+        public TimeStatisticsChartModel(string name, double time)
         {
             Name = name;
             Time = time;
@@ -13,7 +13,7 @@ namespace SmartHouseSystem.Model
       
         public string Name { get; set; }
 
-        public int Time
+        public double Time
         {
             get=> _time;
             set=>SetProperty(ref _time,value);

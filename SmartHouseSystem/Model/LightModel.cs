@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -8,8 +9,11 @@ namespace SmartHouseSystem.Model
     {
         private bool _lightStatus;
         private int _ID;
-        private int _bulbOnTimeInMinutesPerDay = 1440;
+        private double _bulbOnTimeInMinutesPerDay = 1440;
         private string _name;
+        public DateTime TimeOn { get; set; }
+        public DateTime TimeOff { get; set; }
+
         public LightModel(int ID, bool lightStatus, string name)
         {
             _lightStatus = lightStatus;
@@ -43,7 +47,7 @@ namespace SmartHouseSystem.Model
             }
         }
 
-        public int BulbOnTimeInMinutesPerDay
+        public double BulbOnTimeInMinutesPerDay
         {
             get => _bulbOnTimeInMinutesPerDay;
             set
@@ -52,7 +56,7 @@ namespace SmartHouseSystem.Model
                 OnBulbTimePropertyChanged();
             }
         }
-        public int BulbOffTimeInMinutesPerDay { get; set; } = 0;
+        public double BulbOffTimeInMinutesPerDay { get; set; } = 0;
 
         public ObservableCollection<TimeStatisticsChartModel> TimeStatisticsChartModelObservableCollection { get; set; }
 

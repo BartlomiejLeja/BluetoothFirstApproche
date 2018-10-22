@@ -58,10 +58,10 @@ namespace SmartHouseSystem
         }
 
         //TODO This is propobly to remove after implementing onconnection method in azure server app
-        private void _signalRService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-           //   _signalRService.InvokeCheckStatusOfLights(true);
-        }
+//        private void _signalRService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+//        {
+//           //   _signalRService.InvokeCheckStatusOfLights(true);
+//        }
 
         private void _signalRService_LightsLoadedChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

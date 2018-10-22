@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SignalIRServer.Services;
 
@@ -8,10 +9,12 @@ namespace SignalIRServer.Hubs
 {
     public class Broadcaster : Hub
     {
-        private ILightsService _lightsService;
+        private readonly ILightsService _lightsService;
+        private readonly ILogger _logger;
 
-        public Broadcaster(ILightsService lightsService)
+        public Broadcaster(ILightsService lightsService, ILogger<Broadcaster> logger)
         {
+            _logger = logger;
             _lightsService = lightsService;
         }
 
@@ -35,28 +38,18 @@ namespace SignalIRServer.Hubs
         public Task ChangeLightState(bool isLightOn, int lightNumber)
         {
             Console.WriteLine("TrigerLightSevice");
-            _lightsService.SetNewBulbStatus(lightNumber, isLightOn);
+         //   _lightsService.SetNewBulbStatus(lightNumber, isLightOn, DateTime.Now);
             return Clients.All.SendAsync("ChangeLightState", isLightOn, lightNumber);
         }
         
-        public Task CheckStatusOfLights(bool x)
+        public Task SendLightState(int lightID, bool lightStatus, DateTime dateTime,string serializedLightBulbModel)
         {
-            Console.WriteLine("CheckStatusOfLights");
-            return Clients.Others.SendAsync("CheckStatusOfLights", x);
+            _logger.LogInformation($"SendLightState {dateTime}");
+            _lightsService.SetNewBulbStatus(lightID, lightStatus, dateTime);
+            var jsonConvertetLightBulbModel = JsonConvert.SerializeObject(_lightsService.GetLightModel(lightID));
+            return Clients.Others.SendAsync("SendLightState", lightID,lightStatus, dateTime, jsonConvertetLightBulbModel);
         }
-
-        public Task SendLightState(int lightID, bool lightStatus)
-        {
-            Console.WriteLine("SendLightState");
-            _lightsService.SetNewBulbStatus(lightID, lightStatus);
-            return Clients.Others.SendAsync("SendLightState", lightID,lightStatus);
-        }
-        public Task InvokeStatisticsService(bool isStatisticsServiceOn)
-        {
-            Console.WriteLine("InvokeStatisticsService");
-            return Clients.Others.SendAsync("InvokeStatisticsService", isStatisticsServiceOn);
-        }
-
+        
         public Task SendInitialLightCollection(string lightsCollection)
         {
             Console.WriteLine("SendInitialLightCollection");
