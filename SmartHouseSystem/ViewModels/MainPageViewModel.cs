@@ -12,7 +12,7 @@ namespace SmartHouseSystem.ViewModels
     {
         private readonly ILightService _lightService;
         private ObservableCollection<TimeStatisticsCollectionChartModel> _listOfChartData;
-
+       
         public ObservableCollection<TimeStatisticsCollectionChartModel> ListOfChartData
         {
             get => _listOfChartData;
@@ -24,33 +24,50 @@ namespace SmartHouseSystem.ViewModels
             _lightService = lightService;
            
             SetStatusListData();
-       
+
+         //   ChartHandler(_lightService);
+
             lightService.BulbTimePropertyChanged += _bulbTime_PropertyChangedAsync;
         }
 
         private void SetStatusListData()
         {
             ListOfChartData = new ObservableCollection<TimeStatisticsCollectionChartModel>();
+           
             foreach (var lightBulb in _lightService.LightModelList)
             {
-                var bulbOnStatisticsChartModel = new TimeStatisticsChartModel(StatusTypeConverter(lightBulb.LightStatus),
+                var bulbOnStatisticsChartModel = new TimeStatisticsChartModel("On",
                     lightBulb.BulbOnTimeInMinutesPerDay);
-                var bulbOfStatisticsChartModel = new TimeStatisticsChartModel(StatusTypeConverter(lightBulb.LightStatus),
+                var bulbOfStatisticsChartModel = new TimeStatisticsChartModel("Off",
                     lightBulb.BulbOffTimeInMinutesPerDay);
 
-                ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel,lightBulb.Name));
+                ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel, lightBulb.Name));
             }
         }
-
-        private string StatusTypeConverter(bool status)
-        {
-            return status ? "On" : "Off";
-        }
-
+        
         private async void _bulbTime_PropertyChangedAsync(object sender, PropertyChangedEventArgs e)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                   SetStatusListData);
+                () =>
+                {
+                    ListOfChartData = new ObservableCollection<TimeStatisticsCollectionChartModel>();
+                    foreach (var lightBulb in _lightService.LightModelList)
+                    {
+                        TimeStatisticsChartModel bulbOnStatisticsChartModel;
+                        TimeStatisticsChartModel bulbOfStatisticsChartModel;
+
+                        bulbOnStatisticsChartModel = new TimeStatisticsChartModel(
+                            "On",
+                            lightBulb.BulbOnTimeInMinutesPerDay);
+                        bulbOfStatisticsChartModel = new TimeStatisticsChartModel(
+                            "Off",
+                            lightBulb.BulbOffTimeInMinutesPerDay);
+
+                        ListOfChartData.Add(new TimeStatisticsCollectionChartModel(bulbOnStatisticsChartModel, bulbOfStatisticsChartModel, lightBulb.Name));
+                    }
+                });
         }
+
     }
 }
+

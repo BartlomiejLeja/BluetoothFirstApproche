@@ -87,15 +87,25 @@ namespace SmartHouseSystem.Services
 
             _connection.On<int,bool,DateTime, string>("SendLightState", (lightID, lightStatus,dateTime, serializedLightBulbModel) =>
             {
-               var LightBulbModel = JsonConvert.DeserializeObject<LightModel>(serializedLightBulbModel);
+               var lightBulbModel = JsonConvert.DeserializeObject<LightModel>(serializedLightBulbModel);
                 if (lightService.LightModelList.Any(light=> light.ID==lightID))
                 {
-                    lightService.LightModelList.First(light => light.ID == lightID).LightStatus = lightStatus;
-                    if (lightStatus == true)
-                    {
-                        lightService.LightModelList.First(light => light.ID == lightID).TimeOn = dateTime;
-                    }else if(lightStatus == false)
-                        lightService.LightModelList.First(light => light.ID == lightID).TimeOff = dateTime;
+                    //                    lightService.LightModelList.First(light => light.ID == lightID).LightStatus = lightStatus;
+                    //                    if (lightStatus == true)
+                    //                    {
+                    //                        lightService.LightModelList.First(light => light.ID == lightID).TimeOn = dateTime;
+                    //                    }else if(lightStatus == false)
+                    //                        lightService.LightModelList.First(light => light.ID == lightID).TimeOff = dateTime;
+                    lightService.LightModelList.First(light => light.ID == lightID).BulbOffTimeInMinutesPerDay =
+                        lightBulbModel.BulbOffTimeInMinutesPerDay;
+                    lightService.LightModelList.First(light => light.ID == lightID).BulbOnTimeInMinutesPerDay =
+                        lightBulbModel.BulbOnTimeInMinutesPerDay;
+                    lightService.LightModelList.First(light => light.ID == lightID).LightStatus =
+                        lightBulbModel.LightStatus;
+                    lightService.LightModelList.First(light => light.ID == lightID).TimeOff =
+                        lightBulbModel.TimeOff;
+                    lightService.LightModelList.First(light => light.ID == lightID).TimeOn=
+                        lightBulbModel.TimeOn;
                 }
             });
 
@@ -152,5 +162,4 @@ namespace SmartHouseSystem.Services
         }
     }
 }
-    
-
+   

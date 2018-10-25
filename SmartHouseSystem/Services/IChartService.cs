@@ -2,6 +2,6 @@
 {
     public interface IChartService
     {
-        void ChartHandler(bool isStatisticsServiceOn, ILightService lightService);
+        void ChartHandler(ILightService lightService);
     }
 }
