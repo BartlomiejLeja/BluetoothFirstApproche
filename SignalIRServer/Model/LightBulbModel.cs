@@ -2,9 +2,13 @@
 
 namespace SignalIRServer.Model
 {
-    public class LightModel
+    public class LightBulbModel
     {
-        public LightModel(int ID, bool lightStatus, string name)
+        public LightBulbModel()
+        {
+
+        }
+        public LightBulbModel(int ID, bool lightStatus, string name)
         {
             this.LightStatus = lightStatus;
             this.ID = ID;

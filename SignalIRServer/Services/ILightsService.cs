@@ -6,8 +6,8 @@ namespace SignalIRServer.Services
 {
     public interface ILightsService
     {
-        List<LightModel> GetListOfLightBullbs();
-        LightModel GetLightModel(int lightBulbID);
+        List<LightBulbModel> GetListOfLightBullbs();
+        LightBulbModel GetLightModel(int lightBulbID);
         void SetNewBulbStatus(int lightBulbID, bool lightBulbStatus, DateTime dateTime);
     }
 }

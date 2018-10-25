@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SignalIRServer.Hubs;
+using SignalIRServer.Model;
+using SignalIRServer.MongoDbContexts;
+using SignalIRServer.Repository;
 using SignalIRServer.Services;
 
 namespace SignalIRServer
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+        public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -24,10 +28,14 @@ namespace SignalIRServer
                                     .AllowAnyHeader()
                                     .AllowAnyMethod());
             });
+           
             services.AddSignalR();
            // services.Add(new ServiceDescriptor(typeof(ILightsService), typeof(LightsService), ServiceLifetime.Singleton));
             services.AddSingleton<ILightsService, LightsService>();
+            services.AddTransient<ILightBulbContext, LightBulbContext>();
+            services.AddTransient<ILightBulbRepository, LightBulbRepository>();
             services.AddMvc();
+            services.AddSingleton<IConfiguration>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +45,7 @@ namespace SignalIRServer
             {
                 app.UseDeveloperExceptionPage();
             }
-
+           
             //app.Run(async (context) =>
             //{
             //    await context.Response.WriteAsync("Hello World!");
@@ -48,6 +56,7 @@ namespace SignalIRServer
             {
                 routes.MapHub<Broadcaster>("/LightApp");
             });
+          
             app.UseMvc();
         }
     }

@@ -40,7 +40,7 @@ namespace SmartHouseSystem
           
             _signalRService.ConnectionBuilder(_chartService, _lightService);
             //TODO This is propobly to remove after implementing onconnection method in azure server app
-            _signalRService.CurrentConnectionStatePropertyChanged += _signalRService_PropertyChanged;
+           // _signalRService.CurrentConnectionStatePropertyChanged += _signalRService_PropertyChanged;
             _signalRService.LightsListLoadedPropertyChanged += _signalRService_LightsLoadedChange;
             ExtendedSplashScreenFactory = (splashscreen) => _extendedSplashScreen=new ExtendedSplashScreen(splashscreen);
             this.Suspending += OnSuspending;
