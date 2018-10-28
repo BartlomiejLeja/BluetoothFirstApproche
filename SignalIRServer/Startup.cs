@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SignalIRServer.Crone;
 using SignalIRServer.Hubs;
 using SignalIRServer.Model;
 using SignalIRServer.MongoDbContexts;
 using SignalIRServer.Repository;
+using SignalIRServer.Scheduling;
 using SignalIRServer.Services;
 
 namespace SignalIRServer
@@ -36,6 +39,13 @@ namespace SignalIRServer
             services.AddTransient<ILightBulbRepository, LightBulbRepository>();
             services.AddMvc();
             services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<IScheduledTask, NewDayTask>();
+            services.AddScheduler((sender, args) =>
+            {
+                Console.Write(args.Exception.Message);
+                args.SetObserved();
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

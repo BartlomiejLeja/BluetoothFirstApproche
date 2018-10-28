@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SignalIRServer.Model;
 
@@ -10,8 +8,8 @@ namespace SignalIRServer.Repository
     {
         Task<IEnumerable<LightBulbDbModel>> GetAllLightBulbs();
         Task<LightBulbDbModel> GetLightBulb(int ID);
-        Task Create(LightBulbDbModel game);
+        Task Create(LightBulbDbModel lightBulbDbModel);
         Task<bool> Delete(int ID);
-        Task<bool> Update(LightBulbDbModel game);
+        Task<bool> Update(LightBulbDbModel lightBulbDbModel);
     }
 }

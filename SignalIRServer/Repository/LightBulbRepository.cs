@@ -31,18 +31,18 @@ namespace SignalIRServer.Repository
                 .FirstOrDefaultAsync();
         }
 
-        public async Task Create(LightBulbDbModel game)
+        public async Task Create(LightBulbDbModel lightBulbDbModel)
         {
-            await _context.LightBulbDBModel.InsertOneAsync(game);
+            await _context.LightBulbDBModel.InsertOneAsync(lightBulbDbModel);
         }
-        public async Task<bool> Update(LightBulbDbModel game)
+        public async Task<bool> Update(LightBulbDbModel lightBulbDbModel)
         {
             ReplaceOneResult updateResult =
                 await _context
                     .LightBulbDBModel
                     .ReplaceOneAsync(
-                        filter: g => g.Id == game.Id,
-                        replacement: game);
+                        filter: g => g.Id == lightBulbDbModel.Id,
+                        replacement: lightBulbDbModel);
             return updateResult.IsAcknowledged
                    && updateResult.ModifiedCount > 0;
         }

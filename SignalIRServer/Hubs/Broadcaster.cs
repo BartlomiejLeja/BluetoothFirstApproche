@@ -55,5 +55,11 @@ namespace SignalIRServer.Hubs
             Console.WriteLine("SendInitialLightCollection");
             return Clients.Others.SendAsync("SendInitialLightCollection", lightsCollection);
         }
+
+        public Task SendSchedulePlan(string schedulePlanJson)
+        {
+            _logger.LogInformation("Sending schedule paln");
+            return Clients.All.SendAsync("SendSchedulePlan", schedulePlanJson);
+        }
     } 
 }
