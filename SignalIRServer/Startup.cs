@@ -37,9 +37,11 @@ namespace SignalIRServer
             services.AddSingleton<ILightsService, LightsService>();
             services.AddTransient<ILightBulbContext, LightBulbContext>();
             services.AddTransient<ILightBulbRepository, LightBulbRepository>();
+            services.AddSingleton<ISignalRClientService, SignalRClientService>();
             services.AddMvc();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IScheduledTask, NewDayTask>();
+            services.AddSingleton<IScheduledTask, HourTask>();
             services.AddScheduler((sender, args) =>
             {
                 Console.Write(args.Exception.Message);
