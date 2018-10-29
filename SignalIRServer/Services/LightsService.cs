@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using SignalIRServer.HttpClient;
 using SignalIRServer.Model;
 using SignalIRServer.Repository;
+using System.Threading.Tasks;
 
 namespace SignalIRServer.Services
 {
@@ -28,6 +30,7 @@ namespace SignalIRServer.Services
             {
                 _logger.LogInformation($"IS IN lightBulbStatus True  {dateTime}");
                 _lightBullbModelList.First(lightBulb => lightBulb.ID == lightBulbID).TimeOn = dateTime;
+              
             }
 
             if (lightBulbStatus == false)
@@ -68,8 +71,21 @@ namespace SignalIRServer.Services
                 _lightBullbModelList.First(lightBulb => lightBulb.ID == lightBulbID).TimeOn = new DateTime();
                 _lightBullbModelList.First(lightBulb => lightBulb.ID == lightBulbID).TimeOff = new DateTime();
             }
+        //    await SavePredictionModelToDbAsync(lightBulbID, dateTime, lightBulbStatus);
         }
-        
+
+        public async Task SavePredictionModelToDbAsync(int lightBulbID,DateTime dateTime,bool status)
+        {
+            var predictionUsageLightBulbModel = new PredictionUsageLightBulbModel()
+            {
+                LightBulbID = lightBulbID,IsOn = status ? 1:0,
+                Day=(int)dateTime.DayOfWeek,Month= dateTime.Month,Time =(dateTime.Hour*60 + dateTime.Minute)
+            };
+            var httpClient = new PredictionScheduleApiClient();
+
+            await httpClient.CreatePredictionModelAsync(predictionUsageLightBulbModel);
+        }
+
         public List<LightBulbModel> GetListOfLightBullbs()
         {
             return _lightBullbModelList;

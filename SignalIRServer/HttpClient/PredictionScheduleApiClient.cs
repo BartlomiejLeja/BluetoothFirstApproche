@@ -12,13 +12,13 @@ namespace SignalIRServer.HttpClient
         {
             _client = new System.Net.Http.HttpClient
             {
-                BaseAddress = new Uri("http://localhost:58295/")
+                BaseAddress = new Uri("smarthousemachinelearningv10020181028070832.azurewebsites.net/")
             };
         }
 
-        public async Task<string> GetSchedule()
+        public async Task<string> GetSchedule(int lightBulbId, int month, int day, int timeFrom, int timeTo)
         {
-            var res = await _client.GetAsync("api/prediction/1/1/1/10/30");
+            var res = await _client.GetAsync($"api/prediction/{lightBulbId}/{month}/{day}/{timeFrom}/{timeTo}");
             string result = null;
             if (res.IsSuccessStatusCode)
             {
@@ -28,7 +28,19 @@ namespace SignalIRServer.HttpClient
             return result;
         }
 
-        public async Task<Uri> CreateProductAsync(LightBulbDbModel lightBulbDbModel)
+        public async Task<string> Train()
+        {
+            var res = await _client.GetAsync("api/prediction/train");
+            string result = null;
+            if (res.IsSuccessStatusCode)
+            {
+                result = res.Content.ReadAsStringAsync().Result;
+            }
+
+            return result;
+        }
+
+        public async Task<Uri> CreatePredictionModelAsync(PredictionUsageLightBulbModel lightBulbDbModel)
         {
             var response = await _client.PostAsync("api/LightBulb", new JsonContent(lightBulbDbModel));
             response.EnsureSuccessStatusCode();
